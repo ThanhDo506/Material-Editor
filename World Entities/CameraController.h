@@ -27,6 +27,7 @@ private:
     Camera *p_camera;
 
     friend class Application;
+    friend class GUI;
 };
 
 #endif

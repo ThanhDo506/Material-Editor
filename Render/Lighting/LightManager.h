@@ -11,7 +11,6 @@
 class LightManager
 {
 public:
-    virtual ~LightManager() = default;
     void addLight(Light *light);
     void removeLight(Light *light);
     void updateShader(Shader &shader);
@@ -21,7 +20,6 @@ private:
     unsigned int _spotCount = 0;
     std::vector<Light*> _lights;
 
-    // clean all signed Light from Memory
     void clean();
     friend class Application;
 };

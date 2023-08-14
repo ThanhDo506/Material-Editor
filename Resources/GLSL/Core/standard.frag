@@ -53,7 +53,7 @@ struct Material {
     int         aoMapsCount;
 
     sampler2D   emissionMaps[MAX_EMISSION_TEXTURES];
-    int         emissionMapsCOunt;
+    int         emissionMapsCount;
 
     sampler2D   normalMap;
     bool        hasNormalMap;

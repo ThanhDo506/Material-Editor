@@ -27,6 +27,8 @@ private:
     std::vector<GLuint>  _indices;
     
     std::vector<TextureMap> _textures;
+    
+    friend class Model;
 };
 
 #endif // !MESH_H

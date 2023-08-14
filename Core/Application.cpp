@@ -203,7 +203,7 @@ void Application::run()
         std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     
-    Camera camera(Transform::identity(), _width, _height);
+    Camera camera(_width, _height);
     CameraController camera_controller(&camera);
     glfwSetTime(0.0);
     while(!glfwWindowShouldClose(p_glfwWindow))
@@ -501,6 +501,12 @@ void Application::run()
     // glDeleteBuffers(1, &quadVBO);
     // glDeleteRenderbuffers(1, &rbo);
     // glDeleteFramebuffers(1, &framebuffer);
+}
+
+void Application::setVsync(bool isOn)
+{
+    _isVsync = isOn;
+    glfwSwapInterval(_isVsync);
 }
 
 GLuint Application::loadTexture(const char* path)

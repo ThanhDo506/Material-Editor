@@ -104,6 +104,7 @@ inline glm::vec2 calculateMipLevel(int mip0Width, int mip0Height, int level) {
 class Texture
 {
 public:
+    ~Texture();
     // Loads a texture from a given path.
     static Texture load(const char* path, bool isSRGB = true);
     static Texture load(const char* path, bool isSRGB, const TextureParams& params);
@@ -121,7 +122,7 @@ public:
     static Texture createCubemap(int size, GLenum internalFormat, const TextureParams& params);
 
     // Delete the texture
-    void free();
+    void clean();
 
     void bindToUnit(unsigned int textureUnit, TextureBindType bindType = TextureBindType::BY_TEXTURE_TYPE);
 
@@ -151,6 +152,7 @@ private:
 
     friend class Model;
     friend class Mesh;
+    friend class GUI;
 };
 
 #endif

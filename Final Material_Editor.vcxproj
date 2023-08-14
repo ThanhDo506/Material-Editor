@@ -117,6 +117,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)..\Dependencies\glew-2.1.0\include;$(SolutionDir)..\Dependencies\glfw-3.3.8\include;$(SolutionDir)..\Dependencies\glm;$(SolutionDir)..\Dependencies\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);WIN64;</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,12 +140,15 @@
     <ClCompile Include="Core\Application.cpp" />
     <ClCompile Include="Core\Input.cpp" />
     <ClCompile Include="Core\Time.cpp" />
+    <ClCompile Include="Render\GUI\GUI.cpp" />
+    <ClCompile Include="Render\Material.cpp" />
+    <ClCompile Include="Render\Model.cpp" />
     <ClCompile Include="World Entities\Camera.cpp" />
     <ClCompile Include="World Entities\CameraController.cpp" />
+    <ClCompile Include="World Entities\Entity.cpp" />
     <ClCompile Include="World Entities\Transform.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Render\Lighting\DirectionalLight.cpp" />
-    <ClCompile Include="Render\Lighting\Light.cpp" />
     <ClCompile Include="Render\Lighting\LightManager.cpp" />
     <ClCompile Include="Render\Lighting\PointLight.cpp" />
     <ClCompile Include="Render\Lighting\SpotLight.cpp" />
@@ -161,7 +165,63 @@
     <ClCompile Include="third-party\imgui\imgui_tables.cpp" />
     <ClCompile Include="third-party\imgui\imgui_widgets.cpp" />
     <ClCompile Include="third-party\stb\stb_image.cpp" />
-    <ClCompile Include="WorldManager.cpp" />
+    <ClCompile Include="World Entities\WorldManager.cpp">
+      <RuntimeLibrary>MultiThreadedDebugDll</RuntimeLibrary>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <Optimization>Disabled</Optimization>
+      <SupportJustMyCode>true</SupportJustMyCode>
+      <AssemblerOutput>NoListing</AssemblerOutput>
+      <AssemblerListingLocation>x64\Debug\</AssemblerListingLocation>
+      <UndefineAllPreprocessorDefinitions>false</UndefineAllPreprocessorDefinitions>
+      <BrowseInformation>false</BrowseInformation>
+      <BrowseInformationFile>x64\Debug\</BrowseInformationFile>
+      <CompileAs>Default</CompileAs>
+      <ConformanceMode>true</ConformanceMode>
+      <DiagnosticsFormat>Classic</DiagnosticsFormat>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <ErrorReporting>Prompt</ErrorReporting>
+      <ExpandAttributedSource>false</ExpandAttributedSource>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <EnableFiberSafeOptimizations>false</EnableFiberSafeOptimizations>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <IgnoreStandardIncludePath>false</IgnoreStandardIncludePath>
+      <MinimalRebuild>false</MinimalRebuild>
+      <OmitDefaultLibName>false</OmitDefaultLibName>
+      <FavorSizeOrSpeed>Neither</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <ObjectFileName>x64\Debug\</ObjectFileName>
+      <CallingConvention>Cdecl</CallingConvention>
+      <ProgramDataBaseFileName>x64\Debug\vc141.pdb</ProgramDataBaseFileName>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>x64\Debug\Final Material_Editor.pch</PrecompiledHeaderOutputFile>
+      <PreprocessToFile>false</PreprocessToFile>
+      <PreprocessKeepComments>false</PreprocessKeepComments>
+      <PreprocessSuppressLineNumbers>false</PreprocessSuppressLineNumbers>
+      <RemoveUnreferencedCodeData>true</RemoveUnreferencedCodeData>
+      <ShowIncludes>false</ShowIncludes>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <SmallerTypeCheck>false</SmallerTypeCheck>
+      <SpectreMitigation>false</SpectreMitigation>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <TrackerLogDirectory>x64\Debug\Final Ma.090AB366.tlog\</TrackerLogDirectory>
+      <MinimalRebuildFromTracking>true</MinimalRebuildFromTracking>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <UseFullPaths>true</UseFullPaths>
+      <WarningLevel>Level3</WarningLevel>
+      <XMLDocumentationFileName>x64\Debug\</XMLDocumentationFileName>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <PreprocessorDefinitions>_MBCS;</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <LinkCompiled>true</LinkCompiled>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BufferObject\ElementBufferObject.h" />
@@ -170,8 +230,12 @@
     <ClInclude Include="Core\Application.h" />
     <ClInclude Include="Core\Input.h" />
     <ClInclude Include="Core\Time.h" />
+    <ClInclude Include="Render\GUI\GUI.h" />
+    <ClInclude Include="Render\Material.h" />
+    <ClInclude Include="Render\Model.h" />
     <ClInclude Include="World Entities\Camera.h" />
     <ClInclude Include="World Entities\CameraController.h" />
+    <ClInclude Include="World Entities\Entity.h" />
     <ClInclude Include="World Entities\Transform.h" />
     <ClInclude Include="World Entities\Vertex.h" />
     <ClInclude Include="Render\Lighting\DirectionalLight.h" />
@@ -199,7 +263,63 @@
     <ClInclude Include="third-party\imgui\imstb_textedit.h" />
     <ClInclude Include="third-party\imgui\imstb_truetype.h" />
     <ClInclude Include="third-party\stb\stb_image.h" />
-    <ClInclude Include="WorldManager.h" />
+    <ClInclude Include="World Entities\WorldManager.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\fonts\Cousine-Regular.ttf" />
+    <Content Include="Resources\fonts\DroidSans.ttf" />
+    <Content Include="Resources\fonts\Karla-Regular.ttf" />
+    <Content Include="Resources\fonts\ProggyClean.ttf" />
+    <Content Include="Resources\fonts\ProggyTiny.ttf" />
+    <Content Include="Resources\fonts\Roboto-Medium.ttf" />
+    <Content Include="Resources\GLSL\Core\depth.frag" />
+    <Content Include="Resources\GLSL\Core\gamma.frag" />
+    <Content Include="Resources\GLSL\Core\light.frag" />
+    <Content Include="Resources\GLSL\Core\normal.frag" />
+    <Content Include="Resources\GLSL\Core\pbr.frag" />
+    <Content Include="Resources\GLSL\Core\standard.frag" />
+    <Content Include="Resources\GLSL\Core\standard.vert" />
+    <Content Include="Resources\GLSL\fragShader.glsl" />
+    <Content Include="Resources\GLSL\FrameBuffer.frag" />
+    <Content Include="Resources\GLSL\FrameBuffer.vert" />
+    <Content Include="Resources\GLSL\guitarShader.frag" />
+    <Content Include="Resources\GLSL\guitarShader.vert" />
+    <Content Include="Resources\GLSL\SkyShader.frag" />
+    <Content Include="Resources\GLSL\SkyShader.vert" />
+    <Content Include="Resources\GLSL\vertShader.glsl" />
+    <Content Include="Resources\ibl\brown_photostudio_02_2k.hdr" />
+    <Content Include="Resources\ibl\dikhololo_night_2k.hdr" />
+    <Content Include="Resources\ibl\evening_road_01_puresky_2k.hdr" />
+    <Content Include="Resources\ibl\kloofendal_48d_partly_cloudy_puresky_2k (1).hdr" />
+    <Content Include="Resources\ibl\kloofendal_48d_partly_cloudy_puresky_2k.hdr" />
+    <Content Include="Resources\ibl\kloppenheim_06_puresky_2k.hdr" />
+    <Content Include="Resources\ibl\sunflowers_puresky_2k.hdr" />
+    <Content Include="Resources\images\awesomeface.png" />
+    <Content Include="Resources\images\container.jpg" />
+    <Content Include="Resources\images\metal.png" />
+    <Content Include="Resources\images\Skybox\back.jpg" />
+    <Content Include="Resources\images\Skybox\bottom.jpg" />
+    <Content Include="Resources\images\Skybox\front.jpg" />
+    <Content Include="Resources\images\Skybox\left.jpg" />
+    <Content Include="Resources\images\Skybox\right.jpg" />
+    <Content Include="Resources\images\Skybox\top.jpg" />
+    <Content Include="Resources\images\wall.jpg" />
+    <Content Include="Resources\images\wood.png" />
+    <Content Include="Resources\models\cloth\source\Cloth.fbx" />
+    <Content Include="Resources\models\cloth\textures\Ambient_Occlusion_Map_from_Mesh_Cloth.png" />
+    <Content Include="Resources\models\cloth\textures\Cloth.fbx" />
+    <Content Include="Resources\models\cloth\textures\Curvature_Cloth.png" />
+    <Content Include="Resources\models\cloth\textures\internal_ground_ao_texture.jpeg" />
+    <Content Include="Resources\models\cloth\textures\Normal_Map_from_Mesh_Cloth.png" />
+    <Content Include="Resources\models\cloth\textures\Position_Cloth.png" />
+    <Content Include="Resources\models\guitar\ao.jpg" />
+    <Content Include="Resources\models\guitar\backpack.mtl" />
+    <Content Include="Resources\models\guitar\backpack.obj" />
+    <Content Include="Resources\models\guitar\diffuse.jpg" />
+    <Content Include="Resources\models\guitar\normal.png" />
+    <Content Include="Resources\models\guitar\roughness.jpg" />
+    <Content Include="Resources\models\guitar\source_attribution.txt" />
+    <Content Include="Resources\models\guitar\specular.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

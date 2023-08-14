@@ -1,13 +1,13 @@
 ﻿#include "Camera.h"
 
-Camera::Camera(Transform transform, int screenWidth, int screenHeight, float near, float far, float zoom)
+Camera::Camera(int screenWidth, int screenHeight, Transform transform, float near, float far, float zoom)
 {
     this->transform  = transform;
-    this->_width     = screenWidth;
-    this->_height    = screenHeight;
-    this->_near      = near;
-    this->_far       = far;
-    this->_zoom      = zoom;
+    _width     = screenWidth;
+    _height    = screenHeight;
+    _near      = near;
+    _far       = far;
+    _zoom      = zoom;
 }
 
 glm::mat4 Camera::getViewMatrix() const
@@ -23,4 +23,12 @@ glm::mat4 Camera::getPerspectiveProjectionMatrix() const
 glm::mat4 Camera::getOrthoProjectionMatrix() const
 {
     return glm::ortho(0.0f, _width * 1.0f, 0.0f, _height * 1.0f, _near, _far);
+}
+
+void Camera::init()
+{
+}
+
+void Camera::update()
+{
 }

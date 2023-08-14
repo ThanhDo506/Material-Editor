@@ -9,7 +9,6 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-
 enum class TextureMapType
 {
     DIFFUSE,
@@ -20,6 +19,7 @@ enum class TextureMapType
     ROUGHNESS,
     METALLIC,
     CUBEMAP,
+    NONE
 };
 
 inline std::vector<aiTextureType> textureMapTypeToAiTextureTypes(
@@ -52,17 +52,23 @@ inline std::vector<aiTextureType> textureMapTypeToAiTextureTypes(
 class TextureMap
 {
 public:
-    TextureMap(const Texture& texture, TextureMapType type)
+    TextureMap(const Texture& texture, TextureMapType type = TextureMapType::NONE)
         : _texture(texture), _type(type) {}
-
+    TextureMap() { _type = TextureMapType::NONE; }
+    
     Texture& getTexture() { return _texture; }
     TextureMapType getType() const { return _type; }
+
+    void clean();
+    
+    static std::string to_string(TextureMapType type);
 private:
     TextureMapType _type;
     Texture _texture;
 
     friend class Model;
     friend class Mesh;
+    friend class GUI;
 };
 
 #endif

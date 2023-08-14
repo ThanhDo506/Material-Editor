@@ -1,16 +1,26 @@
 ﻿#pragma once
+#include "Entity.h"
 #include "Transform.h"
 #include "../Render/Shader.h"
 
-class Camera
+class Camera : public Entity
 {
 public:
-    Camera(Transform transform,
-               int       screenWidth,
+    /**
+     * \brief 
+     * \param transform 
+     * \param screenWidth 
+     * \param screenHeight 
+     * \param near 
+     * \param far 
+     * \param zoom fov
+     */
+    Camera(int       screenWidth,
                int       screenHeight,
-               float     near      = 0.1f,
-               float     far       = 1000.f,
-               float     zoom      = 45.0f);
+               Transform transform = Transform::identity(),
+               float     near        = 0.1f,
+               float     far         = 1000.f,
+               float     zoom        = 45.0f);
     glm::mat4 getViewMatrix() const;
 
     glm::mat4 getPerspectiveProjectionMatrix() const;
@@ -58,14 +68,16 @@ public:
     }
 #pragma endregion
 private:
-    Transform transform;
-    float _sensivity;
     float _zoom;
     float _near;
     float _far;
 
     int _width, _height;
 
+    void init() override;
+    void update() override;
+
     friend class Application;
     friend class CameraController;
+    friend class GUI;
 };

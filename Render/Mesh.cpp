@@ -21,8 +21,6 @@ Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, std::vec
     _vao.linkAttrib(_vbo, 3, 2, GL_FLOAT, sizeof(Vertex), (void*)(offsetof(Vertex, texCoord)));
     // Tangent 3 float
     _vao.linkAttrib(_vbo, 4, 3, GL_FLOAT, sizeof(Vertex), (void*)(offsetof(Vertex, tangent)));
-    // bitangent 3 float
-    //_vao.linkAttrib(_vbo, 5, 3, GL_FLOAT, sizeof(Vertex), (void*)(offsetof(Vertex, bitangent)));
     // bone weight MAX_BONE_INFLUENCE = 4 float
     //_vao.linkAttrib(_vbo, 6, MAX_BONE_INFLUENCE, GL_FLOAT, sizeof(Vertex), (void*)(17 * sizeof(float)));
     // bone ID MAX_BONE_INFLUENCE = 4 int
@@ -68,6 +66,15 @@ void Mesh::draw(Shader& shader, Camera& camera, bool isSameShaderProgram)
         case TextureMapType::ROUGHNESS:
             type = "_Roughness";
             break;
+        case TextureMapType::AO:
+            type = "_Ao";
+            break;
+        case TextureMapType::METALLIC:
+            type = "_Metallic";
+            break;
+        case TextureMapType::EMISSION:
+            type = "_Emission";
+            break;
         default: break;
         }
         // call directly for better performance
@@ -87,4 +94,6 @@ void Mesh::draw(Shader& shader, Camera& camera, bool isSameShaderProgram)
 void Mesh::clean()
 {
     _vao.Delete();
+    _ebo.Delete();
+    _vbo.Delete();
 }

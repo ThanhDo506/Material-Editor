@@ -15,6 +15,8 @@ public:
                 glm::vec4   clearColor  = glm::vec4(0, 0, 0, 1));
     ~Application();
     void run();
+
+    void setVsync(bool isOn);
 private:
     GLFWwindow *p_glfwWindow;
     std::string _name;
@@ -25,4 +27,6 @@ private:
 
     static GLuint loadTexture(const char* path);
     static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+
+    friend class GUI;
 };

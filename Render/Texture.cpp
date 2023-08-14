@@ -4,6 +4,10 @@
 
 #define MAX_ANISOTROPY_SAMPLES 4.0f
 
+Texture::~Texture()
+{
+    clean();
+}
 
 Texture Texture::load(const char* path, bool isSRGB)
 {
@@ -379,7 +383,7 @@ void Texture::unsetSamplerMipRange()
     setSamplerMipRange(0, 1000);
 }
 
-void Texture::free() { glDeleteTextures(1, &_id); }
+void Texture::clean() { glDeleteTextures(1, &_id); }
 
 void Texture::generateMips(int maxNumMips)
 {
