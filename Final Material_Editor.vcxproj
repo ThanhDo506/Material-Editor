@@ -115,14 +115,91 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Dependencies\glew-2.1.0\include;$(SolutionDir)..\Dependencies\glfw-3.3.8\include;$(SolutionDir)..\Dependencies\glm;$(SolutionDir)..\Dependencies\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);WIN64;</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\Dependencies\glew-2.1.0\lib\Release;$(SolutionDir)..\Dependencies\glfw-3.3.8\lib\Release;$(SolutionDir)..\Dependencies\assimp\lib\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glew32.lib;libglew32.lib;glfw3dll.lib;opengl32.lib;assimp-vc141-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y "$(ProjectDir)../Dependencies/glew-2.1.0/bin/Release" "$(TargetDir)"
+                xcopy /y "$(ProjectDir)../Dependencies/glfw-3.3.8/lib/Release" "$(TargetDir)"
+                xcopy /y "$(ProjectDir)../Dependencies/assimp/bin/Release" "$(TargetDir)"
+                xcopy /y "$(ProjectDir)../Dependencies/assimp/lib/Release" "$(TargetDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BufferObject\ElementBufferObject.cpp" />
+    <ClCompile Include="BufferObject\VertexAttributeObject.cpp" />
+    <ClCompile Include="BufferObject\VertexBufferObject.cpp" />
+    <ClCompile Include="Core\Application.cpp" />
+    <ClCompile Include="Core\Input.cpp" />
+    <ClCompile Include="Core\Time.cpp" />
+    <ClCompile Include="World Entities\Camera.cpp" />
+    <ClCompile Include="World Entities\CameraController.cpp" />
+    <ClCompile Include="World Entities\Transform.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Render\Lighting\DirectionalLight.cpp" />
+    <ClCompile Include="Render\Lighting\Light.cpp" />
+    <ClCompile Include="Render\Lighting\LightManager.cpp" />
+    <ClCompile Include="Render\Lighting\PointLight.cpp" />
+    <ClCompile Include="Render\Lighting\SpotLight.cpp" />
+    <ClCompile Include="Render\Mesh.cpp" />
+    <ClCompile Include="Render\Shader.cpp" />
+    <ClCompile Include="Render\Texture.cpp" />
+    <ClCompile Include="Render\TextureMap.cpp" />
+    <ClCompile Include="third-party\ImGuiFileDialog-master\ImGuiFileDialog.cpp" />
+    <ClCompile Include="third-party\imgui\imgui.cpp" />
+    <ClCompile Include="third-party\imgui\imgui_demo.cpp" />
+    <ClCompile Include="third-party\imgui\imgui_draw.cpp" />
+    <ClCompile Include="third-party\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="third-party\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="third-party\imgui\imgui_tables.cpp" />
+    <ClCompile Include="third-party\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="third-party\stb\stb_image.cpp" />
+    <ClCompile Include="WorldManager.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BufferObject\ElementBufferObject.h" />
+    <ClInclude Include="BufferObject\VertexAttributeObject.h" />
+    <ClInclude Include="BufferObject\VertexBufferObject.h" />
+    <ClInclude Include="Core\Application.h" />
+    <ClInclude Include="Core\Input.h" />
+    <ClInclude Include="Core\Time.h" />
+    <ClInclude Include="World Entities\Camera.h" />
+    <ClInclude Include="World Entities\CameraController.h" />
+    <ClInclude Include="World Entities\Transform.h" />
+    <ClInclude Include="World Entities\Vertex.h" />
+    <ClInclude Include="Render\Lighting\DirectionalLight.h" />
+    <ClInclude Include="Render\Lighting\Light.h" />
+    <ClInclude Include="Render\Lighting\LightManager.h" />
+    <ClInclude Include="Render\Lighting\PointLight.h" />
+    <ClInclude Include="Render\Lighting\SpotLight.h" />
+    <ClInclude Include="Render\Mesh.h" />
+    <ClInclude Include="Render\Shader.h" />
+    <ClInclude Include="Render\Texture.h" />
+    <ClInclude Include="Render\TextureMap.h" />
+    <ClInclude Include="Render\utilities.h" />
+    <ClInclude Include="third-party\ImGuiFileDialog-master\dirent\dirent.h" />
+    <ClInclude Include="third-party\ImGuiFileDialog-master\ImGuiFileDialog.h" />
+    <ClInclude Include="third-party\ImGuiFileDialog-master\ImGuiFileDialogConfig.h" />
+    <ClInclude Include="third-party\ImGuiFileDialog-master\stb\stb_image.h" />
+    <ClInclude Include="third-party\ImGuiFileDialog-master\stb\stb_image_resize.h" />
+    <ClInclude Include="third-party\imgui\imconfig.h" />
+    <ClInclude Include="third-party\imgui\imgui.h" />
+    <ClInclude Include="third-party\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="third-party\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="third-party\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="third-party\imgui\imgui_internal.h" />
+    <ClInclude Include="third-party\imgui\imstb_rectpack.h" />
+    <ClInclude Include="third-party\imgui\imstb_textedit.h" />
+    <ClInclude Include="third-party\imgui\imstb_truetype.h" />
+    <ClInclude Include="third-party\stb\stb_image.h" />
+    <ClInclude Include="WorldManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
