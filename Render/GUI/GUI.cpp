@@ -170,6 +170,33 @@ void GUI::draw()
             ImGui::TreePop();
         }
     }
+
+    if (ImGui::TreeNode("HDR"))
+    {
+        static const char* items[]     = {"None", "Reinhard", "Exposure"};
+        static int         currentItem = 0;
+        if (ImGui::Combo("##combo", &currentItem, items, IM_ARRAYSIZE(items)))
+        {
+            switch (currentItem)
+            {
+            case 0:
+                p_application->hdr = 0;
+                break;
+            case 1:
+                p_application->hdr = 1;
+                break;
+            case 2:
+                p_application->hdr = 2;
+                break;
+            default: break;
+            }
+        }
+        
+        ImGui::SliderFloat("exposure", &p_application->exposure, 0.002, 20.0f);
+        ImGui::TreePop();
+    }
+
+    
     ImGui::End();
 #pragma endregion
     

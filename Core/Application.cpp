@@ -15,7 +15,7 @@
 #include "../World Entities/Vertex.h"
 #include "../Render/Mesh.h"
 #include "../Render/Model.h"
-
+#include "../Render/Skybox.h"
 
 unsigned int loadTexture(const char *path);
 
@@ -123,33 +123,68 @@ void Application::run()
     TextureMap diffuse = TextureMap(Texture::load("Resources/models/guitar/diffuse.jpg"), TextureMapType::DIFFUSE);
     model1._material._diffuseMaps.push_back(diffuse);
 
+    std::vector<std::string> skyBoxImg =
+    {
+        "Resources/images/Skybox/right.jpg",
+        "Resources/images/Skybox/left.jpg",
+        "Resources/images/Skybox/top.jpg",
+        "Resources/images/Skybox/bottom.jpg",
+        "Resources/images/Skybox/front.jpg",
+        "Resources/images/Skybox/back.jpg"
+    };
+    Skybox skybox(skyBoxImg, "Resources/GLSL/Core/FrameBuffer/Skybox.vert",
+        "Resources/GLSL/Core/FrameBuffer/Skybox.frag");
+
 #pragma region my FBO
     Shader screenShader("Resources/GLSL/FrameBuffer.vert", "Resources/GLSL/FrameBuffer.frag");
     screenShader.Activate();
     screenShader.setInt("screenTexture", 0);
 
-    float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
-        // positions   // texCoords
-        -1.0f,  1.0f,  0.0f, 1.0f,
-        -1.0f, -1.0f,  0.0f, 0.0f,
-         1.0f, -1.0f,  1.0f, 0.0f,
-
-        -1.0f,  1.0f,  0.0f, 1.0f,
-         1.0f, -1.0f,  1.0f, 0.0f,
-         1.0f,  1.0f,  1.0f, 1.0f
+    unsigned int quadVAO = 0;
+    unsigned int quadVBO;
+    float quadVertices[] = {
+        // positions        // texture Coords
+        -1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+         1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+         1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
     };
-    // screen quad VAO
-    unsigned int quadVAO, quadVBO;
+    // setup plane VAO
     glGenVertexArrays(1, &quadVAO);
     glGenBuffers(1, &quadVBO);
     glBindVertexArray(quadVAO);
     glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-    
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    // float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+    //     // positions        // texCoords
+    //     -1.0f,  1.0f, 0.0,   0.0f, 1.0f,
+    //     -1.0f, -1.0f, 0.0,   0.0f, 0.0f,
+    //      1.0f, -1.0f, 0.0,   1.0f, 0.0f,
+    //                   0.0,  
+    //     -1.0f,  1.0f, 0.0,   0.0f, 1.0f,
+    //      1.0f, -1.0f, 0.0,   1.0f, 0.0f,
+    //      1.0f,  1.0f, 0.0,   1.0f, 1.0f
+    // };
+    // // screen quad VAO
+    // unsigned int quadVAO, quadVBO;
+    // glGenVertexArrays(1, &quadVAO);
+    // glGenBuffers(1, &quadVBO);
+    // glBindVertexArray(quadVAO);
+    // glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+    // glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+    // glEnableVertexAttribArray(0);
+    // glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    // glEnableVertexAttribArray(1);
+    // glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+    //
+
+
+    // TODO: separate normal skybox and HDR sky box
+#pragma region normal Skybox
     unsigned int framebuffer;
     glGenFramebuffers(1, &framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -171,9 +206,36 @@ void Application::run()
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 #pragma endregion 
-    
+
+#pragma region HDR Skybox
+    unsigned int hdrFBO;
+    glGenFramebuffers(1, &hdrFBO);
+    // create floating point color buffer
+    unsigned int colorBuffer;
+    glGenTextures(1, &colorBuffer);
+    glBindTexture(GL_TEXTURE_2D, colorBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, _width, _height, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // create depth buffer (renderbuffer)
+    unsigned int rboDepth;
+    glGenRenderbuffers(1, &rboDepth);
+    glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, _width, _height);
+    // attach buffers
+    glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBuffer, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "Framebuffer not complete!" << std::endl;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    Shader hdrShader("Resources/GLSL/Core/FrameBuffer/Hdr.vert",
+        "Resources/GLSL/Core/FrameBuffer/Hdr.frag");
+    hdrShader.setInt("hdrBuffer", 0);
+#pragma endregion 
+#pragma endregion 
 
     glfwSetTime(0.0);
     Time::instance()._lastUpdatedTime = 0.0;
@@ -190,7 +252,9 @@ void Application::run()
         // start Render
         // Bind render data to FBO to quadVAO
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
         glEnable(GL_DEPTH_TEST);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shaderProgram1.Activate();
         shaderProgram1.setMat4("model", transform);
@@ -200,19 +264,39 @@ void Application::run()
         
         model1.draw(guitarShader, cam);
 
+        // draw sky box here
+        skybox.draw(cam);
+        
         // now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
-        // clear all relevant buffers
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // set clear color to white (not really necessary actually, since we won't be able to see behind the quad anyways)
-        glClear(GL_COLOR_BUFFER_BIT);
+
+        
+        // glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
+        // // clear all relevant buffers
+        // glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // set clear color to white (not really necessary actually, since we won't be able to see behind the quad anyways)
+        // glClear(GL_DEPTH_BUFFER_BIT);
+        //
+        // // after bind FBO to quadVAO
+        // // now render quadVAO
+        // screenShader.Activate();
+        // glBindVertexArray(quadVAO);
+        // glBindTexture(GL_TEXTURE_2D, textureColorbuffer);	// use the color attachment texture as the texture of the quad plane
+        // glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        hdrShader.Activate();
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, colorBuffer);
+        hdrShader.setInt("hdr", hdr);
+        hdrShader.setFloat("exposure", exposure);
 
         // after bind FBO to quadVAO
         // now render quadVAO
-        screenShader.Activate();
         glBindVertexArray(quadVAO);
         glBindTexture(GL_TEXTURE_2D, textureColorbuffer);	// use the color attachment texture as the texture of the quad plane
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+        std::cout << "hdr: " << (hdr ? "on" : "off") << "| exposure: " << exposure << std::endl;
         
         // draw GUI
         GUI::instance().draw();

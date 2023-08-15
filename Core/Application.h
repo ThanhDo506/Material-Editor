@@ -29,4 +29,7 @@ private:
     static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
     friend class GUI;
+
+    int hdr = 0;
+    float exposure = 0.1;
 };

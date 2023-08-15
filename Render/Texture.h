@@ -154,6 +154,7 @@ private:
     friend class Mesh;
     friend class GUI;
     friend class Application;
+    friend class Skybox;
 };
 
 #endif

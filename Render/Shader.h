@@ -145,6 +145,7 @@ private:
 
     friend class Mesh;
     friend class Model;
+    friend class Skybox;
 };
 
 #endif // !SHADER_H
