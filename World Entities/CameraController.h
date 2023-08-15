@@ -28,6 +28,7 @@ private:
 
     friend class Application;
     friend class GUI;
+    friend class WorldManager;
 };
 
 #endif

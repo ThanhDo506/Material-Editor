@@ -17,15 +17,17 @@ public:
     void run();
 
     void setVsync(bool isOn);
+    inline int getWidth() const { return _width; }
+    inline int getHeight() const { return _height; }
+    
 private:
-    GLFWwindow *p_glfwWindow;
+    GLFWwindow  *p_glfwWindow;
     std::string _name;
-    glm::vec4 _viewPort;
-    glm::vec4 _clearColor;
-    int _width, _height;
-    bool _isVsync;
+    glm::vec4   _viewPort;
+    glm::vec4   _clearColor;
+    int         _width, _height;
+    bool        _isVsync;
 
-    static GLuint loadTexture(const char* path);
     static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
     friend class GUI;

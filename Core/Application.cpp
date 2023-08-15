@@ -107,7 +107,7 @@ void Application::run()
     };
     Mesh mesh(vertices, indices, textures);
 
-    Shader shaderProgram1("Resources/GLSL/vertShader.glsl", "Resources/GLSL/fragShader.glsl");
+    Shader shaderProgram1("Resources/GLSL/vertShader.glsl", "Resources/GLSL/fragShader.glsl", "shaderProgram1");
     shaderProgram1.Activate();
     shaderProgram1.setInt("texture1", 1);
     shaderProgram1.setInt("texture2", 0);
@@ -118,8 +118,9 @@ void Application::run()
     Camera             cam( this->_width, this->_height);
     CameraController cameraController(&cam);
 
-	Shader guitarShader("Resources/GLSL/guitarShader.vert", "Resources/GLSL/guitarShader.frag");
-    Model  model1("Resources/models/guitar/backpack.obj");
+    Model  model1("Resources/models/guitar/backpack.obj",
+        "Resources/GLSL/guitarShader.vert",
+        "Resources/GLSL/guitarShader.frag");
     TextureMap diffuse = TextureMap(Texture::load("Resources/models/guitar/diffuse.jpg"), TextureMapType::DIFFUSE);
     model1._material._diffuseMaps.push_back(diffuse);
 
@@ -136,7 +137,7 @@ void Application::run()
         "Resources/GLSL/Core/FrameBuffer/Skybox.frag");
 
 #pragma region my FBO
-    Shader screenShader("Resources/GLSL/FrameBuffer.vert", "Resources/GLSL/FrameBuffer.frag");
+    Shader screenShader("Resources/GLSL/FrameBuffer.vert", "Resources/GLSL/FrameBuffer.frag", "screenShader");
     screenShader.Activate();
     screenShader.setInt("screenTexture", 0);
 
@@ -232,7 +233,7 @@ void Application::run()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     Shader hdrShader("Resources/GLSL/Core/FrameBuffer/Hdr.vert",
-        "Resources/GLSL/Core/FrameBuffer/Hdr.frag");
+        "Resources/GLSL/Core/FrameBuffer/Hdr.frag", "hdrShader");
     hdrShader.setInt("hdrBuffer", 0);
 #pragma endregion 
 #pragma endregion 
@@ -262,7 +263,7 @@ void Application::run()
         shaderProgram1.setMat4("projection", cam.getPerspectiveProjectionMatrix());
         mesh.draw(shaderProgram1, cam, "", false);
         
-        model1.draw(guitarShader, cam);
+        model1.draw(cam);
 
         // draw sky box here
         skybox.draw(cam);
@@ -296,7 +297,6 @@ void Application::run()
         glBindTexture(GL_TEXTURE_2D, textureColorbuffer);	// use the color attachment texture as the texture of the quad plane
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-        std::cout << "hdr: " << (hdr ? "on" : "off") << "| exposure: " << exposure << std::endl;
         
         // draw GUI
         GUI::instance().draw();
@@ -311,43 +311,6 @@ void Application::setVsync(bool isOn)
 {
     _isVsync = isOn;
     glfwSwapInterval(_isVsync);
-}
-
-GLuint Application::loadTexture(const char* path)
-{
-    unsigned int textureID;
-    glGenTextures(1, &textureID);
-
-    int width, height, nrComponents;
-    unsigned char *data = stbi_load(path, &width, &height, &nrComponents, 0);
-    if (data)
-    {
-        GLenum format;
-        if (nrComponents == 1)
-            format = GL_RED;
-        else if (nrComponents == 3)
-            format = GL_RGB;
-        else if (nrComponents == 4)
-            format = GL_RGBA;
-
-        glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        stbi_image_free(data);
-    }
-    else
-    {
-        std::cout << "Texture failed to load at path: " << path << std::endl;
-        stbi_image_free(data);
-    }
-
-    return textureID;
 }
 
 void Application::framebuffer_size_callback(GLFWwindow* window, int width, int height)

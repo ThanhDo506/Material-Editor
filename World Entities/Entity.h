@@ -3,6 +3,7 @@
 #include <string>
 #include <glm/glm.hpp>
 #include "Transform.h"
+#include "../Render/Shader.h"
 
 class Entity
 {
@@ -15,11 +16,12 @@ public:
 
     glm::mat4 getWorldMatrixTransform() const;
 
-    Transform          transform;
-    std::string        _name;
-    bool               _isActive = true;
-    Entity*            p_parent;
-    std::list<Entity*> _children;
+    bool                _isActive = true;
+    Transform           transform;
+    std::string         _name;
+    Entity              *p_parent;
+    Shader              *p_shader;
+    std::list<Entity*>  _children;
 
     virtual void init() = 0;
     virtual void update() = 0;
