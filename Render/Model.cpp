@@ -11,11 +11,6 @@ Model::Model(std::string const  &path,
     p_parent        = parent;
 }
 
-Model::~Model()
-{
-    
-}
-
 void Model::processNode(aiNode* node, const aiScene* scene)
 {
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
@@ -105,15 +100,15 @@ void Model::loadModel(std::string const& path)
     // read file via ASSIMP
     Assimp::Importer importer;
     const aiScene*   scene = importer.ReadFile(
-        path, aiProcess_Triangulate | aiProcess_GenSmoothNormals |
+        path, aiProcess_Triangulate |
+        aiProcess_GenSmoothNormals |
         aiProcess_CalcTangentSpace);
     // check for errors
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
-        !scene->mRootNode) // if is Not Zero
-            {
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
+        {
         std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
         return;
-            }
+        }
     // retrieve the directory path of the filepath
     _directory = path.substr(0, path.find_last_of('/'));
 
@@ -128,15 +123,16 @@ void Model::loadMaterial(aiMaterial* mat, aiTexture textureType, TextureMapType 
 void Model::draw(Shader& shader, Camera& camera)
 {
     shader.Activate();
+    shader.setMat4("_Transform", transform.getMatrixTransform());
     shader.setMat4("_Projection", camera.getPerspectiveProjectionMatrix());
     shader.setMat4("_View", camera.getViewMatrix());
-    unsigned int diffuseMapCount = 0;
-    unsigned int specularCount = 0;
-    unsigned int metallicMapCount = 0;
-    unsigned int roughnessMapCount = 0;
-    unsigned int aoMapCount = 0;
-    unsigned int emissionMapCount = 0;
-    unsigned int count = 0;
+    int diffuseMapCount = 0;
+    int specularCount = 0;
+    int metallicMapCount = 0;
+    int roughnessMapCount = 0;
+    int aoMapCount = 0;
+    int emissionMapCount = 0;
+    int count = 0;
     // 1 DIFFUSE
     for (unsigned int i = 0; i < _material._diffuseMaps.size(); i++)
     {
@@ -145,6 +141,7 @@ void Model::draw(Shader& shader, Camera& camera)
         shader.setInt("_Material.diffuseMaps[" + std::to_string(i) + "]", diffuseMapCount++);
         count++;
     }
+    shader.setInt("_Material.diffuseMapsCount", diffuseMapCount);
     // 2 SPECULAR
     for (unsigned int i = 0; i < _material._specularMaps.size(); i++)
     {
@@ -153,6 +150,7 @@ void Model::draw(Shader& shader, Camera& camera)
         shader.setInt("_Material.specularMaps[" + std::to_string(i) + "]", specularCount++);
         count++;
     }
+    shader.setInt("_Material.specularMapsCount", specularCount);
     // 3 Roughness
     for (unsigned int i = 0; i < _material._roughnessMaps.size(); i++)
     {
@@ -161,6 +159,7 @@ void Model::draw(Shader& shader, Camera& camera)
         shader.setInt("_Material.roughnessMaps[" + std::to_string(i) + "]", roughnessMapCount++);
         count++;
     }
+    shader.setInt("_Material.roughnessMapsCount", roughnessMapCount);
     // 4 AO
     for (unsigned int i = 0; i < _material._aoMaps.size(); i++)
     {
@@ -169,6 +168,7 @@ void Model::draw(Shader& shader, Camera& camera)
         shader.setInt("_Material.aoMaps[" + std::to_string(i) + "]", aoMapCount++);
         count++;
     }
+    shader.setInt("_Material.aoMapsCount", aoMapCount);
     // 5 Metallic
     for (unsigned int i = 0; i < _material._metallicMaps.size(); i++)
     {
@@ -177,6 +177,7 @@ void Model::draw(Shader& shader, Camera& camera)
         shader.setInt("_Material.metallicMaps[" + std::to_string(i) + "]", metallicMapCount++);
         count++;
     }
+    shader.setInt("_Material.metallicMapsCount", metallicMapCount);
     // 6 Emission
     for (unsigned int i = 0; i < _material._emissionMaps.size(); i++)
     {
@@ -185,6 +186,7 @@ void Model::draw(Shader& shader, Camera& camera)
         shader.setInt("_Material.emissionMaps[" + std::to_string(i) + "]", emissionMapCount++);
         count++;
     }
+    shader.setInt("_Material.emissionMapsCount", emissionMapCount);
     // 7 Normal
     if(_material._normalMap._type != TextureMapType::NONE)
     {
@@ -198,6 +200,10 @@ void Model::draw(Shader& shader, Camera& camera)
     // draw Meshes
     for (unsigned int i = 0; i < _meshes.size(); i++)
     {
+        // _meshes[i].draw(shader,camera,"", true);
+        // or call direct opengl func for better performance about 5 - 10 %
+        // have tested by DoNT
+        // maybe latency when call function like static_cast<GLsizei>(_meshes[i]._indices.size()) below
         glBindVertexArray(_meshes[i]._vao._id);
         glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_meshes[i]._indices.size()), GL_UNSIGNED_INT, nullptr);
         glBindVertexArray(0);
@@ -210,4 +216,12 @@ void Model::init()
 
 void Model::update()
 {
+}
+
+void Model::clean()
+{
+    for (auto mesh : _meshes)
+    {
+        mesh.clean();
+    }
 }

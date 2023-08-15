@@ -1,17 +1,14 @@
 ﻿#include "Texture.h"
 
+#include <iostream>
 #include <glm/gtc/type_ptr.hpp>
 
 #define MAX_ANISOTROPY_SAMPLES 4.0f
 
-Texture::~Texture()
-{
-    clean();
-}
-
 Texture Texture::load(const char* path, bool isSRGB)
 {
     TextureParams params = {
+        false,
         true,
         TextureFiltering::ANISOTROPIC,
         TextureWrapMode::REPEAT,
@@ -38,6 +35,7 @@ Texture Texture::load(const char* path, bool isSRGB, const TextureParams& params
     }
 
     GLenum dataFormat;
+    std::cout << texture._numChannels << std::endl;
     if (texture._numChannels == 1)
     {
         texture._internalFormat = GL_R8;
@@ -95,6 +93,7 @@ Texture Texture::load(const char* path, bool isSRGB, const TextureParams& params
 Texture Texture::loadHdr(const char* path)
 {
     TextureParams params = {
+        false,
         true,
         TextureFiltering::BILINEAR,
         TextureWrapMode::CLAMP_TO_EDGE,
@@ -170,6 +169,7 @@ Texture Texture::loadHdr(const char* path, const TextureParams& params)
 Texture Texture::loadCubemap(std::vector<std::string> faces)
 {
     TextureParams params = {
+        false,
         true,
         TextureFiltering::BILINEAR,
         TextureWrapMode::CLAMP_TO_EDGE,
@@ -256,6 +256,7 @@ Texture Texture::loadCubemap(std::vector<std::string> faces,
 Texture Texture::create(int width, int height, GLenum internalFormat)
 {
     TextureParams params = {
+        false,
         true,
         TextureFiltering::BILINEAR,
         TextureWrapMode::CLAMP_TO_EDGE,
@@ -300,6 +301,7 @@ Texture Texture::create(int width, int height, GLenum internalFormat,
 Texture Texture::createCubemap(int size, GLenum internalFormat)
 {
     TextureParams params = {
+        false,
         true,
         TextureFiltering::BILINEAR,
         TextureWrapMode::CLAMP_TO_EDGE,

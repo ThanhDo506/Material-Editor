@@ -15,7 +15,8 @@ class Mesh
 public:
     Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, std::vector<TextureMap>& textures);
     ~Mesh();
-    void draw(Shader& shader, Camera& camera, bool isSameShaderProgram = false);
+    void draw(Shader& shader, Camera& camera,
+        std::string const &uniformPrefix = "", bool isSameShaderProgram = false);
 
     void clean();
 
@@ -29,6 +30,7 @@ private:
     std::vector<TextureMap> _textures;
     
     friend class Model;
+    friend class Application;
 };
 
 #endif // !MESH_H

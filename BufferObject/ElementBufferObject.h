@@ -6,7 +6,6 @@ class ElementBufferObject
 {
 public:
     ElementBufferObject() = default;
-    ~ElementBufferObject();
     ElementBufferObject(std::vector<GLuint>& indices);
     GLuint setBuffer(std::vector<GLuint>& indices);
     

@@ -5,6 +5,34 @@ Input& input = Input::instance();
 
 Input::Input()
 {
+    p_glfwWindow = nullptr;
+}
+
+void Input::init(GLFWwindow * p_glfwWindow)
+{
+    this->p_glfwWindow = p_glfwWindow;
+}
+
+void Input::update()
+{
+    if (glfwGetKey(p_glfwWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    {
+        glfwSetWindowShouldClose(p_glfwWindow, 1);
+    } else if (glfwGetKey(p_glfwWindow, GLFW_KEY_1) == GLFW_PRESS)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    } else if (glfwGetKey(p_glfwWindow, GLFW_KEY_2) == GLFW_PRESS)
+    {
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    } else if (glfwGetKey(p_glfwWindow, GLFW_KEY_3) == GLFW_PRESS)
+    {
+        glPointSize(10.0f);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+    } else if (glfwGetKey(p_glfwWindow, GLFW_KEY_4) == GLFW_PRESS)
+    {
+        glPointSize(1.0f);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+    }
 }
 
 void Input::reset()

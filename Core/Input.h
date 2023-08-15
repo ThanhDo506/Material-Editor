@@ -16,8 +16,10 @@ private:
     Input(const Input& obj)           = delete;
     void operator=(const Input& obj)  = delete;
     Input();
-    
 
+    void init(GLFWwindow * p_glfwWindow);
+    
+    void update();
     void reset();
     
     static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);

@@ -74,6 +74,7 @@ enum class MipGeneration {
 };
 
 struct TextureParams {
+    bool isSRGB = false;
     bool flipVerticallyOnLoad = true;
     TextureFiltering filtering = TextureFiltering::NEAREST;
     TextureWrapMode wrapMode = TextureWrapMode::REPEAT;
@@ -104,7 +105,6 @@ inline glm::vec2 calculateMipLevel(int mip0Width, int mip0Height, int level) {
 class Texture
 {
 public:
-    ~Texture();
     // Loads a texture from a given path.
     static Texture load(const char* path, bool isSRGB = true);
     static Texture load(const char* path, bool isSRGB, const TextureParams& params);
@@ -153,6 +153,7 @@ private:
     friend class Model;
     friend class Mesh;
     friend class GUI;
+    friend class Application;
 };
 
 #endif

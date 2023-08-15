@@ -25,11 +25,6 @@ GLuint VertexBufferObject::setBuffer(std::vector<T>& buffer)
     return _id;
 }
 
-VertexBufferObject::~VertexBufferObject()
-{
-    glDeleteBuffers(1, &_id);
-}
-
 void VertexBufferObject::Bind()
 {
     glBindBuffer(GL_ARRAY_BUFFER, _id);

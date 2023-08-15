@@ -5,11 +5,6 @@ VertexAttributeObject::VertexAttributeObject()
     glGenVertexArrays(1, &_id);
 }
 
-VertexAttributeObject::~VertexAttributeObject()
-{
-    glDeleteVertexArrays(1, &_id);
-}
-
 void VertexAttributeObject::Bind()
 {
     glBindVertexArray(_id);

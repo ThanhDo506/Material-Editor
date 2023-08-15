@@ -12,7 +12,6 @@ public:
           Transform         transform = Transform::identity(),
           std::string const &name   = "Model",
           Entity*           parent    = nullptr);
-    ~Model();
 private:
     std::vector<Mesh> _meshes;
     Material          _material;
@@ -27,8 +26,10 @@ private:
     void draw(Shader &shader, Camera &camera);
     void init() override;
     void update() override;
+    void clean();
 
     friend class GUI;
+    friend class Application;
 };
 
 

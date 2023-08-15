@@ -8,7 +8,6 @@ class VertexAttributeObject
 {
 public:
     VertexAttributeObject();
-    ~VertexAttributeObject();
     void Bind();
     void Unbind();
     void Delete();

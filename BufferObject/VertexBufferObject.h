@@ -8,7 +8,6 @@ class VertexBufferObject
 {
 public:
     VertexBufferObject() = default;
-    ~VertexBufferObject();
     template <typename T>
     VertexBufferObject(std::vector<T>& buffer);
 

@@ -1,10 +1,5 @@
 ﻿#include "ElementBufferObject.h"
 
-ElementBufferObject::~ElementBufferObject()
-{
-    glDeleteBuffers(1, &_id);
-}
-
 ElementBufferObject::ElementBufferObject(std::vector<GLuint>& indices)
 {
     glGenBuffers(1, &_id);

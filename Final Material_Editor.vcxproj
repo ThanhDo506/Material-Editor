@@ -135,6 +135,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BufferObject\ElementBufferObject.cpp" />
+    <ClCompile Include="BufferObject\FrameBufferObject.cpp" />
+    <ClCompile Include="BufferObject\RenderBufferObject.cpp" />
     <ClCompile Include="BufferObject\VertexAttributeObject.cpp" />
     <ClCompile Include="BufferObject\VertexBufferObject.cpp" />
     <ClCompile Include="Core\Application.cpp" />
@@ -225,6 +227,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BufferObject\ElementBufferObject.h" />
+    <ClInclude Include="BufferObject\FrameBufferObject.h" />
+    <ClInclude Include="BufferObject\RenderBufferObject.h" />
     <ClInclude Include="BufferObject\VertexAttributeObject.h" />
     <ClInclude Include="BufferObject\VertexBufferObject.h" />
     <ClInclude Include="Core\Application.h" />
@@ -277,6 +281,8 @@
     <Content Include="Resources\GLSL\Core\light.frag" />
     <Content Include="Resources\GLSL\Core\normal.frag" />
     <Content Include="Resources\GLSL\Core\pbr.frag" />
+    <Content Include="Resources\GLSL\Core\Skybox.frag" />
+    <Content Include="Resources\GLSL\Core\Skybox.vert" />
     <Content Include="Resources\GLSL\Core\standard.frag" />
     <Content Include="Resources\GLSL\Core\standard.vert" />
     <Content Include="Resources\GLSL\fragShader.glsl" />
