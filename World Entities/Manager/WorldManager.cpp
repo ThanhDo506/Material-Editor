@@ -1,7 +1,6 @@
 #include "WorldManager.h"
-
 #include <iostream>
-
+#include "../../utilities/utilities.h"
 
 WorldManager& worldManager = WorldManager::instance();
 
@@ -49,7 +48,7 @@ void WorldManager::draw()
     {
         if(!p_mainCamera)
         {
-            throw std::string("RENDER::ERROR::Main camera is null");
+			throw Debug::Exception(Debug::ERROR, "Main camera is null");
         }
         // draw skybox
         p_skybox->draw(*p_mainCamera);
@@ -63,9 +62,9 @@ void WorldManager::draw()
                 model->draw(*p_mainCamera);
             }
         }
-    } catch (std::string const &e)
+    } catch (std::exception const &e)
     {
-        std::cout << e << std::endl;
+        std::cout << e.what() << std::endl;
     }
 }
 

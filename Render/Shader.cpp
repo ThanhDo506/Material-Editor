@@ -1,10 +1,10 @@
 ﻿#include "Shader.h"
 #include <cerrno>
 #include <iostream>
-#include "utilities.h"
+#include "../utilities/utilities.h"
 
 
-Shader::Shader(const char* vertFilepath, const char* fragFilepath, std::string const &name)
+Shader::Shader(const char* vertFilepath, const char* fragFilepath)
 {
     std::string vertexShaderSource   = utilities::readGLSL(vertFilepath);
     std::string fragmentShaderSource = utilities::readGLSL(fragFilepath);
@@ -36,23 +36,11 @@ Shader::Shader(const char* vertFilepath, const char* fragFilepath, std::string c
 
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
-
-    _name = name;
 }
 
 GLuint Shader::getId() const
 {
     return _id;
-}
-
-std::string Shader::getName() const
-{
-    return _name;
-}
-
-void Shader::setName(std::string const& newName)
-{
-    _name = newName;
 }
 
 void Shader::Activate()

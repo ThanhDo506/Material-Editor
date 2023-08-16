@@ -8,7 +8,7 @@
 #include "../World Entities/CameraController.h"
 #include "../Render/Shader.h"
 #include "../Render/GUI/GUI.h"
-#include "../Render/Lighting/LightManager.h"
+#include "../World Entities/Manager/LightManager.h"
 
 #include "../third-party/stb/stb_image.h"
 
@@ -16,6 +16,7 @@
 #include "../Render/Mesh.h"
 #include "../Render/Model.h"
 #include "../Render/Skybox.h"
+#include "../utilities/utilities.h"
 
 unsigned int loadTexture(const char *path);
 
@@ -36,7 +37,7 @@ Application::Application(std::string const &windowName, int const &sceneWidth, i
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
+	
     this->p_glfwWindow = glfwCreateWindow(_width, _height, _name.c_str(), nullptr, nullptr);
     glfwMakeContextCurrent(p_glfwWindow);
 
@@ -55,6 +56,9 @@ Application::Application(std::string const &windowName, int const &sceneWidth, i
 
     Input::instance().init(p_glfwWindow);
     GUI::instance().init(this);
+
+	const GLubyte* renderer = glGetString(GL_RENDERER);
+	AppLog(std::string(reinterpret_cast<const char*>(renderer)));
 }
 
 Application::~Application()
@@ -107,7 +111,7 @@ void Application::run()
     };
     Mesh mesh(vertices, indices, textures);
 
-    Shader shaderProgram1("Resources/GLSL/vertShader.glsl", "Resources/GLSL/fragShader.glsl", "shaderProgram1");
+    Shader shaderProgram1("Resources/GLSL/vertShader.glsl", "Resources/GLSL/fragShader.glsl");
     shaderProgram1.Activate();
     shaderProgram1.setInt("texture1", 1);
     shaderProgram1.setInt("texture2", 0);
@@ -137,7 +141,7 @@ void Application::run()
         "Resources/GLSL/Core/FrameBuffer/Skybox.frag");
 
 #pragma region my FBO
-    Shader screenShader("Resources/GLSL/FrameBuffer.vert", "Resources/GLSL/FrameBuffer.frag", "screenShader");
+    Shader screenShader("Resources/GLSL/FrameBuffer.vert", "Resources/GLSL/FrameBuffer.frag");
     screenShader.Activate();
     screenShader.setInt("screenTexture", 0);
 
@@ -233,20 +237,27 @@ void Application::run()
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     Shader hdrShader("Resources/GLSL/Core/FrameBuffer/Hdr.vert",
-        "Resources/GLSL/Core/FrameBuffer/Hdr.frag", "hdrShader");
+        "Resources/GLSL/Core/FrameBuffer/Hdr.frag");
     hdrShader.setInt("hdrBuffer", 0);
 #pragma endregion 
 #pragma endregion 
 
     glfwSetTime(0.0);
     Time::instance()._lastUpdatedTime = 0.0;
+	double LAST_TIME_STATISTIC = 0.0;
+	unsigned int FRAME_COUNT = 0;
     while(!glfwWindowShouldClose(p_glfwWindow))
     {
         // Calculate timer
         Time::instance()._time = glfwGetTime();
         Time::instance()._deltaTime = Time::instance()._time - Time::instance()._lastUpdatedTime;
         Time::instance()._lastUpdatedTime = Time::instance()._time;
-              
+		if (Time::instance()._time - LAST_TIME_STATISTIC >= 3.0) {
+			AppLog("FPS " + std::to_string(int(FRAME_COUNT / 3)));
+			LAST_TIME_STATISTIC = Time::instance()._time;
+			FRAME_COUNT = 0;
+		}
+		FRAME_COUNT++;
         // Input
         Input::instance().update();
         cameraController.update();
@@ -265,9 +276,7 @@ void Application::run()
         
         model1.draw(cam);
 
-        // draw sky box here
         skybox.draw(cam);
-        
         // now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -297,13 +306,13 @@ void Application::run()
         glBindTexture(GL_TEXTURE_2D, textureColorbuffer);	// use the color attachment texture as the texture of the quad plane
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-        
         // draw GUI
         GUI::instance().draw();
               
         glfwPollEvents();
         Input::instance().reset();
         glfwSwapBuffers(p_glfwWindow);
+
     }
 }
 

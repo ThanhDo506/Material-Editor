@@ -19,11 +19,9 @@ public:
         PROGRAM
     };
 
-    Shader(const char* vertFilepath, const char* fragFilepath, std::string const &name);
+    Shader(const char* vertFilepath, const char* fragFilepath);
 
     GLuint getId() const;
-    std::string getName() const;
-    void setName(std::string const &newName);
 
     void Activate();
     void Delete();
@@ -144,7 +142,6 @@ public:
 private:
     static void getGLError(const GLuint& id, ShaderType glType);
     GLuint      _id;
-    std::string _name;
 
     friend class Mesh;
     friend class Model;

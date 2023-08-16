@@ -11,7 +11,7 @@ Model::Model(std::string const  &path,
     this->transform = transform;
     _name           = name;
     p_parent        = parent;
-    p_shader = new Shader(vertShaderpath.c_str(), fragShaderpath.c_str(), _name + "Shader");
+    p_shader = new Shader(vertShaderpath.c_str(), fragShaderpath.c_str());
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene)

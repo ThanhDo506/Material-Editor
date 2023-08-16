@@ -12,7 +12,7 @@ Skybox::Skybox(std::vector<std::string> imagesPaths, const char* vertPath, const
         -1 // With any value, Cube Texture's mipmap level will alway be set to 1
     };
     _texture = Texture::loadCubemap(imagesPaths, params);
-    _shader = new Shader(vertPath, fragPath, "SkyboxShader");
+    _shader = new Shader(vertPath, fragPath);
     _shader->Activate();
     _shader->setInt("_Skybox", 0);
 
@@ -37,7 +37,7 @@ Skybox::Skybox(std::string const& imagesPaths, const char* vertPath, const char*
         -1 // With any value, Cube Texture's mipmap level will alway be set to 1
     };
     _texture = Texture::loadHdr(imagesPaths.c_str(), params);
-    _shader = new Shader(vertPath, fragPath, "SkyboxShader");
+    _shader = new Shader(vertPath, fragPath);
     _shader->Activate();
     _shader->setInt("_Skybox", 0);
 }

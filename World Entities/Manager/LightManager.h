@@ -3,10 +3,10 @@
 
 #include <vector>
 
-#include "Light.h"
-#include "PointLight.h"
-#include "SpotLight.h"
-#include "DirectionalLight.h"
+#include "../../Render/Lighting/Light.h"
+#include "../../Render/Lighting/PointLight.h"
+#include "../../Render/Lighting/SpotLight.h"
+#include "../../Render/Lighting/DirectionalLight.h"
 
 class LightManager
 {

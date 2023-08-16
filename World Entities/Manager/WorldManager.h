@@ -1,13 +1,16 @@
 #ifndef WORLD_MANAGER_H
 #define WORLD_MANAGER_H
 
-#include "Entity.h"
-#include "../Render/Lighting/LightManager.h"
-#include "../Render/Skybox.h"
-#include "../Core/Application.h"
-#include "../World Entities/Camera.h"
-#include "../World Entities/CameraController.h"
-#include "../Render/Model.h"
+#include "../Entity.h"
+#include "../../Render/Skybox.h"
+#include "../../Core/Application.h"
+#include "../../World Entities/Camera.h"
+#include "../../World Entities/CameraController.h"
+#include "../../Render/Model.h"
+
+#include "LightManager.h"
+#include "ShaderManager.h"
+
 class WorldManager
 {
 public:

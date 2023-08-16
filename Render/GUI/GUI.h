@@ -3,7 +3,7 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include "../../World Entities/WorldManager.h"
+#include "../../World Entities/Manager/WorldManager.h"
 #include "../../Core/Application.h"
 
 #include<glm/glm.hpp>

@@ -1,4 +1,5 @@
-﻿#pragma once
+﻿#ifndef VERTEX_BUFFER_OBJECT_H
+#define VERTEX_BUFFER_OBJECT_H
 
 #include <vector>
 #include <gl/glew.h>
@@ -20,3 +21,4 @@ public:
 
     GLuint _id;
 };
+#endif

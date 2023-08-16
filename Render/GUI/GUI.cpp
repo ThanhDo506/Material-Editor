@@ -60,7 +60,6 @@ void GUI::init(Application* application, const char* version)
     // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(application->p_glfwWindow, true);
     ImGui_ImplOpenGL3_Init(version);
-
 }
 
 void GUI::draw()
@@ -139,7 +138,8 @@ void GUI::draw()
                 default: break;
                 }
             }
-            ImGui::SliderFloat("exposure", &p_application->exposure, 0.002, 5.0f);
+            if(currentItem == 2)
+                ImGui::SliderFloat("exposure", &p_application->exposure, 0.002, 5.0f);
             ImGui::TreePop();
         }
     }
