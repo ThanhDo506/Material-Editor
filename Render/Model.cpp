@@ -1,5 +1,8 @@
 ﻿#include "Model.h"
 
+#include "../World Entities/Manager/ShaderManager.h"
+#include "../World Entities/Manager/WorldManager.h"
+
 Model::Model(std::string const  &path,
              std::string const &vertShaderpath,
              std::string const &fragShaderpath,
@@ -12,6 +15,21 @@ Model::Model(std::string const  &path,
     _name           = name;
     p_parent        = parent;
     p_shader = new Shader(vertShaderpath.c_str(), fragShaderpath.c_str());
+    if(p_shader == nullptr)
+    {
+        std::cout << "WWTF\n";
+    }
+    WorldManager::instance().p_shaderManager->addShader(p_shader, _name);
+}
+
+Model::Model(std::string const& path, Shader* shader, Transform transform, std::string const& name, Entity* parent)
+{
+    loadModel(path);
+    this->transform = transform;
+    _name           = name;
+    p_parent        = parent;
+    p_shader        = shader;
+    WorldManager::instance().p_shaderManager->addShader(p_shader, _name);
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene)
@@ -227,5 +245,7 @@ void Model::clean()
     {
         mesh.clean();
     }
+    // don't clean Shader
+    // ShaderManager 'll do it :D
     p_shader = nullptr;
 }

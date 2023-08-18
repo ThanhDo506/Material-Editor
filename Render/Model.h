@@ -14,12 +14,17 @@ public:
           Transform         transform = Transform::identity(),
           std::string const &name   = "Model",
           Entity*           parent    = nullptr);
+
+    Model(std::string const &path,
+          Shader            *shader,
+          Transform         transform = Transform::identity(),
+          std::string const &name   = "Model",
+          Entity*           parent    = nullptr);
 private:
     std::vector<Mesh>   _meshes;
     Material            _material;
     std::string         _directory;
     
-    // TODO: shouldn't have shader attribute, mush have a Shader holder if want to make optimize render pepline
     Shader              *p_shader;
 
     void processNode(aiNode* node, const aiScene* scene);
