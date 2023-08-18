@@ -63,7 +63,7 @@ void LightManager::removeLight(Light* light)
             light->setLightIndex(_spotCount);
             _spotCount--;
         default:
-            throw Debug::Exception(Debug::DISPLAY_TYPE::WARNING, "UNKNOWN TYPE OF LIGHT");
+            throw Debug::Exception(Debug::LOG_TYPE::WARNING, "UNKNOWN TYPE OF LIGHT");
         }
         auto it = std::find(_lights.begin(), _lights.end(), light);
         if(it != _lights.end())
@@ -72,7 +72,7 @@ void LightManager::removeLight(Light* light)
             delete light;
         } else
         {
-            throw Debug::Exception(Debug::DISPLAY_TYPE::WARNING, "Light isn't signed up in LightManager");
+            throw Debug::Exception(Debug::LOG_TYPE::WARNING, "Light isn't signed up in LightManager");
         }
     } catch (const std::exception &e)
     {
@@ -94,8 +94,11 @@ void LightManager::updateShader(Shader& shader)
 
 void LightManager::clean()
 {
+	unsigned int i = 0;
     for (auto light : _lights)
     {
         delete light;
+    	i++;
     }
+	AppLog("Clean " + std::to_string(i) + " light(s)");
 }

@@ -1,10 +1,11 @@
 ﻿#include "DirectionalLight.h"
 
-DirectionalLight::DirectionalLight(glm::vec3 direction, glm::vec3 diffuse, glm::vec3 specular)
+DirectionalLight::DirectionalLight(glm::vec3 direction,glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular)
 {
-    _direction = direction;
-    _diffuse = diffuse;
-    _specular = specular;
+    _direction  = direction;
+    _diffuse    = diffuse;
+    _specular   = specular;
+    _ambient    = ambient;
 }
 
 Light::LightType DirectionalLight::getLightType() const
@@ -27,6 +28,11 @@ void DirectionalLight::setSpecular(glm::vec3 specular)
     _specular = specular;
 }
 
+void DirectionalLight::setAmbient(glm::vec3 ambient)
+{
+    _ambient = ambient;
+}
+
 glm::vec3 DirectionalLight::getDirection() const
 {
     return _direction;
@@ -40,6 +46,11 @@ glm::vec3 DirectionalLight::getDiffuse() const
 glm::vec3 DirectionalLight::getSpecular() const
 {
     return _specular;
+}
+
+glm::vec3 DirectionalLight::getAmbient() const
+{
+    return _ambient;
 }
 
 std::string DirectionalLight::getUniformName(unsigned lightIndex) const

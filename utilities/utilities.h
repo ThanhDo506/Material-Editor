@@ -34,7 +34,7 @@ namespace utilities
 };
 
 namespace Debug {
-	enum DISPLAY_TYPE
+	enum LOG_TYPE
 	{
 		INFO,
 		WARNING,
@@ -45,13 +45,13 @@ namespace Debug {
 	{
 	public:
 		// Warning: Message should length <= 40 because i use a lot for colorlizing the buffer string
-		explicit Exception(DISPLAY_TYPE displayType, char const * const message) throw() : std::runtime_error(message)
+		explicit Exception(LOG_TYPE displayType, char const * const message) throw() : std::runtime_error(message)
 		{
 			_type = displayType;
 		}
 
 		// Warning: Message should length <= 40 because i use a lot for colorlizing the buffer string
-		explicit Exception(DISPLAY_TYPE displayType, std::string const &message) throw() : std::runtime_error(message)
+		explicit Exception(LOG_TYPE displayType, std::string const &message) throw() : std::runtime_error(message)
 		{
 			_type = displayType;
 		}
@@ -67,16 +67,16 @@ namespace Debug {
 				<< "] ";
 			switch (_type)
 			{
-			case INFO:
+			case LOG_TYPE::INFO:
 				res << "\033[1;36m[INFO]\033[0;0m: " << std::exception::what();
 				break;
-			case WARNING:
+			case LOG_TYPE::WARNING:
 				res << "\033[1;33m[WARNING]\033[0;0m: " << std::exception::what();
 				break;
-			case ERROR:
+			case LOG_TYPE::ERROR:
 				res << "\033[1;31m[ERROR]\033[0;0m: " << std::exception::what();
 				break;
-			case CRITICAL:
+			case LOG_TYPE::CRITICAL:
 				res << "\033[1;31m[CRITICAL]\033[0;0m: " << std::exception::what();
 				break;
 			}
@@ -84,7 +84,7 @@ namespace Debug {
 			return res.str().c_str();
 		}
 
-		static inline void log(DISPLAY_TYPE displayType, std::string const &message, const char* file, const std::size_t line) {
+		static inline void log(LOG_TYPE displayType, std::string const &message, const char* file, const std::size_t line) {
 			std::time_t t = std::time(0);
 			std::tm* now = std::localtime(&t);
 			std::stringstream res;
@@ -107,15 +107,15 @@ namespace Debug {
 				res << "\033[1;31m [CRITICAL]\033[0;0m: " << message;
 				break;
 			}
-			if (displayType != DISPLAY_TYPE::INFO) {
+			if (displayType != LOG_TYPE::INFO) {
 				res << std::endl << " __LINE__ " << line
 					<< std::endl << " __FILE__ " << file << "\033[0;0m";
 			}
-			std::cout << res.str() << std::endl;
+			std::cerr << res.str() << std::endl;
 		}
 	private:
-		DISPLAY_TYPE _type = DISPLAY_TYPE::INFO;
+		LOG_TYPE _type = LOG_TYPE::INFO;
 	};
 };
 
-#define AppLog(message) Debug::Exception::log(Debug::DISPLAY_TYPE::INFO, message, __FILE__, __LINE__)
+#define AppLog(message) Debug::Exception::log(Debug::LOG_TYPE::INFO, message, __FILE__, __LINE__)

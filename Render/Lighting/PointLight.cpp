@@ -1,11 +1,12 @@
 ﻿#include "PointLight.h"
 
-PointLight::PointLight(glm::vec3 position, glm::vec3 diffuse, glm::vec3 specular, Attenuation attenuation)
+PointLight::PointLight(glm::vec3 position,glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, Attenuation attenuation)
 {
     _attenuation = attenuation;
     _position = position;
     _diffuse = diffuse;
     _specular = specular;
+    _ambient = ambient;
 }
 
 Light::LightType PointLight::getLightType() const
@@ -21,6 +22,16 @@ glm::vec3 PointLight::getPosition() const
 void PointLight::setPosition(glm::vec3 position)
 {
     _position = position;
+}
+
+glm::vec3 PointLight::getAmbient() const
+{
+    return _ambient;
+}
+
+void PointLight::setAmbient(glm::vec3 ambient)
+{
+    _ambient = ambient;
 }
 
 glm::vec3 PointLight::getDiffuse() const

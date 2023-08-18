@@ -1,21 +1,28 @@
 ﻿#include "Input.h"
 
+#include "../utilities/utilities.h"
+
 Input& input = Input::instance();
 
 
 Input::Input()
 {
-    p_glfwWindow = nullptr;
+    p_application = nullptr;
 }
 
-void Input::init(GLFWwindow * p_glfwWindow)
+void Input::init(Application * application)
 {
-    this->p_glfwWindow = p_glfwWindow;
+    this->p_application = application;
+    p_glfwWindow = application->p_glfwWindow;
 }
 
 void Input::update()
 {
-    if (glfwGetKey(p_glfwWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+    if (glfwGetKey(p_glfwWindow, GLFW_KEY_P) == GLFW_PRESS)
+    {
+        p_application->_drawGUI = !p_application->_drawGUI;
+    }
+    else if (glfwGetKey(p_glfwWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
         glfwSetWindowShouldClose(p_glfwWindow, 1);
     } else if (glfwGetKey(p_glfwWindow, GLFW_KEY_1) == GLFW_PRESS)
@@ -39,6 +46,12 @@ void Input::reset()
 {
     Input::instance()._deltaMousePosition = Input::instance()._mousePosition - Input::instance()._lastMousePosition;
     _lastMousePosition = _mousePosition;
+}
+
+void Input::clean()
+{
+    p_glfwWindow = nullptr;
+    AppLog("Cleaning Input");
 }
 
 void Input::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)

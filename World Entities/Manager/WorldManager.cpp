@@ -11,10 +11,10 @@ WorldManager::WorldManager()
     p_mainCamera = nullptr;
 }
 
-void WorldManager::init(const Application * p_application)
+void WorldManager::init(Application * p_application)
 {
     p_lightManager = new LightManager;
-    std::vector<std::string> skyBoxImg =
+    const std::vector<std::string> skyBoxImg =
     {
         "Resources/images/Skybox/right.jpg",
         "Resources/images/Skybox/left.jpg",
@@ -28,6 +28,7 @@ void WorldManager::init(const Application * p_application)
 
     p_mainCamera = new Camera(p_application->getWidth(), p_application->getHeight());
     p_mainCameraController = new CameraController(p_mainCamera);
+    p_shaderManager = new ShaderManager;
 }
 
 void WorldManager::update()
@@ -50,7 +51,9 @@ void WorldManager::draw()
         {
 			throw Debug::Exception(Debug::ERROR, "Main camera is null");
         }
+        
         // draw skybox
+        glDisable(GL_CULL_FACE);
         p_skybox->draw(*p_mainCamera);
 
         // draw Entity
@@ -71,10 +74,24 @@ void WorldManager::draw()
 void WorldManager::clean()
 {
     _entities.clear();
+    
+    p_lightManager->clean();
     delete p_lightManager;
+    p_lightManager = nullptr;
+
+    p_skybox->clean();
     delete p_skybox;
+    p_skybox = nullptr;
+
     delete p_mainCamera;
+    p_mainCamera = nullptr;
+
     delete p_mainCameraController;
+    p_mainCameraController = nullptr;
+
+    delete p_shaderManager;
+    p_shaderManager = nullptr;
+
     p_application = nullptr;
 }
 
@@ -86,10 +103,10 @@ WorldManager& WorldManager::instance()
 
 void WorldManager::addEntity(Entity* entity)
 {
-    this->_entities.push_back(entity);
+    _entities.push_back(entity);
 }
 
 void WorldManager::removeEntity(Entity* entity)
 {
-    this->_entities.remove(entity);
+    _entities.remove(entity);
 }

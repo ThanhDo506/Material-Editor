@@ -1,13 +1,14 @@
 ﻿#include "Camera.h"
 
-Camera::Camera(int screenWidth, int screenHeight, Transform transform, float near, float far, float zoom)
+Camera::Camera(int screenWidth, int screenHeight, std::string const &name, Transform transform, float near, float far, float zoom)
 {
-    this->transform  = transform;
-    _width     = screenWidth;
-    _height    = screenHeight;
-    _near      = near;
-    _far       = far;
-    _zoom      = zoom;
+    this->transform = transform;
+    _width          = screenWidth;
+    _height         = screenHeight;
+    _near           = near;
+    _far            = far;
+    _zoom           = zoom;
+    _name           = name;
 }
 
 glm::mat4 Camera::getViewMatrix() const

@@ -30,6 +30,11 @@ public:
         _index = index;
         _uniformName = getUniformName(_index);
     }
+
+    inline unsigned int getLightIndex() const
+    {
+        return _index;
+    }
     
     // is this light applied to LightManager
     inline bool isApply() const { return _isApply; }

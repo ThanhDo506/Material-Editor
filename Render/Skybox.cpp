@@ -1,5 +1,7 @@
 ﻿#include "Skybox.h"
 
+#include "../utilities/utilities.h"
+
 Skybox::Skybox(std::vector<std::string> imagesPaths, const char* vertPath, const char* fragPath)
 {
     TextureParams params = {
@@ -74,4 +76,5 @@ void Skybox::clean()
     _vao.Delete();
     _vbo.Delete();
     _ebo.Delete();
+    AppLog("Cleaning Skybox");
 }

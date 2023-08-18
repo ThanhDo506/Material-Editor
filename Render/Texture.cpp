@@ -35,7 +35,6 @@ Texture Texture::load(const char* path, bool isSRGB, const TextureParams& params
     }
 
     GLenum dataFormat;
-    std::cout << texture._numChannels << std::endl;
     if (texture._numChannels == 1)
     {
         texture._internalFormat = GL_R8;

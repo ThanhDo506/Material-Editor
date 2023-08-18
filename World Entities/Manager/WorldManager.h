@@ -26,13 +26,14 @@ private:
     WorldManager();
 #pragma endregion
 
-    void init(const Application * p_application);
+    void init(Application * p_application);
     void update();
     void draw();
     void clean();
     
     std::list<Entity*>  _entities;
-    
+
+    ShaderManager       *p_shaderManager;
     LightManager        *p_lightManager;
     Skybox              *p_skybox;
     Camera              *p_mainCamera;
@@ -41,6 +42,7 @@ private:
     Application         *p_application;
     friend class Application;
     friend class GUI;
+    friend class Model;
 };
 
 #endif

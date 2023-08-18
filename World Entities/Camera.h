@@ -17,6 +17,7 @@ public:
      */
     Camera(int       screenWidth,
                int       screenHeight,
+               std::string const &name = "MainCamera",
                Transform transform = Transform::identity(),
                float     near        = 0.1f,
                float     far         = 1000.f,

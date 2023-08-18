@@ -1,14 +1,20 @@
 ﻿#include "SpotLight.h"
 
-SpotLight::SpotLight(glm::vec3 position, glm::vec3 direction, float innerAngle, float outerAngle, glm::vec3 diffuse,
-    glm::vec3 specular, Attenuation attenuation)
+SpotLight::SpotLight(glm::vec3 position,
+    glm::vec3 direction,
+    float innerAngle, float outerAngle,
+    glm::vec3 ambient,
+    glm::vec3 diffuse,
+    glm::vec3 specular,
+    Attenuation attenuation)
 {
-    position = _position;
-    direction = _direction;
-    innerAngle = _innerAngle;
-    outerAngle = _outerAngle;
-    specular = _specular;
-    attenuation = _attenuation;
+    _position = position;
+    _direction = direction;
+    _innerAngle = innerAngle;
+    _outerAngle = outerAngle;
+    _specular = specular;
+    _attenuation = attenuation;
+    _ambient = ambient;
 }
 
 Light::LightType SpotLight::getLightType() const
@@ -34,6 +40,16 @@ glm::vec3 SpotLight::getDirection() const
 void SpotLight::setDirection(glm::vec3 direction)
 {
     _direction = direction;
+}
+
+glm::vec3 SpotLight::getAmbient() const
+{
+    return _ambient;
+}
+
+void SpotLight::setAmbient(glm::vec3 ambient)
+{
+    _ambient = ambient;
 }
 
 glm::vec3 SpotLight::getDiffuse() const

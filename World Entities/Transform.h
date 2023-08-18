@@ -30,7 +30,7 @@ public:
      * \return Quaternion
      */
     static glm::quat eulerAnglesToQuaternion(float pitch, float yaw, float roll);
-    
+
     /**
      * \brief Quaternion from Euler Angles
      * \param eulerAngles pitch, yaw, roll

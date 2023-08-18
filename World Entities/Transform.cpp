@@ -34,7 +34,7 @@ glm::vec3 Transform::right() const
 
 glm::vec3 Transform::eulerAngles() const
 {
-    return glm::degrees(glm::eulerAngles(rotation));
+    return glm::eulerAngles(rotation);
 }
 
 glm::quat Transform::eulerAnglesToQuaternion(float pitch, float yaw, float roll)
@@ -47,7 +47,5 @@ glm::quat Transform::eulerAnglesToQuaternion(float pitch, float yaw, float roll)
 
 glm::quat Transform::eulerAnglesToQuaternion(glm::vec3 eulerAngles)
 {
-    return glm::quat(glm::vec3(glm::radians(eulerAngles.x),
-        glm::radians(eulerAngles.y),
-        glm::radians(eulerAngles.z)));
+    return eulerAnglesToQuaternion(eulerAngles.x, eulerAngles.y, eulerAngles.z);
 }

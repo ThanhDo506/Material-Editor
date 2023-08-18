@@ -54,17 +54,19 @@ Application::Application(std::string const &windowName, int const &sceneWidth, i
     }
     glViewport(_viewPort.x, _viewPort.y, _viewPort.z, _viewPort.w);
 
-    Input::instance().init(p_glfwWindow);
-    GUI::instance().init(this);
+    
 
 	const GLubyte* renderer = glGetString(GL_RENDERER);
-	AppLog(std::string(reinterpret_cast<const char*>(renderer)));
-}
+    AppLog(std::string(reinterpret_cast<const char*>(renderer)));
 
-Application::~Application()
-{
-    glfwDestroyWindow(p_glfwWindow);
-    glfwTerminate();
+    Input::instance().init(this);
+    AppLog("Initialize Input handler");
+
+    GUI::instance().init(this);
+    AppLog("Initialize GUI");
+
+    WorldManager::instance().init(this);
+    AppLog("Initialize WorldManager");
 }
 
 void Application::run()
@@ -119,26 +121,12 @@ void Application::run()
     auto transform = glm::mat4(1.0);
     transform      = translate(transform, glm::vec3(0.0f, 0.0f, 10.0f));
 
-    Camera             cam( this->_width, this->_height);
-    CameraController cameraController(&cam);
-
-    Model  model1("Resources/models/guitar/backpack.obj",
+    Model *model1 = new Model("Resources/models/guitar/backpack.obj",
         "Resources/GLSL/guitarShader.vert",
         "Resources/GLSL/guitarShader.frag");
-    TextureMap diffuse = TextureMap(Texture::load("Resources/models/guitar/diffuse.jpg"), TextureMapType::DIFFUSE);
-    model1._material._diffuseMaps.push_back(diffuse);
-
-    std::vector<std::string> skyBoxImg =
-    {
-        "Resources/images/Skybox/right.jpg",
-        "Resources/images/Skybox/left.jpg",
-        "Resources/images/Skybox/top.jpg",
-        "Resources/images/Skybox/bottom.jpg",
-        "Resources/images/Skybox/front.jpg",
-        "Resources/images/Skybox/back.jpg"
-    };
-    Skybox skybox(skyBoxImg, "Resources/GLSL/Core/FrameBuffer/Skybox.vert",
-        "Resources/GLSL/Core/FrameBuffer/Skybox.frag");
+    TextureMap diffuse = TextureMap(
+        Texture::load("Resources/models/guitar/diffuse.jpg"), TextureMapType::DIFFUSE);
+    model1->_material._diffuseMaps.push_back(diffuse);
 
 #pragma region my FBO
     Shader screenShader("Resources/GLSL/FrameBuffer.vert", "Resources/GLSL/FrameBuffer.frag");
@@ -240,8 +228,14 @@ void Application::run()
         "Resources/GLSL/Core/FrameBuffer/Hdr.frag");
     hdrShader.setInt("hdrBuffer", 0);
 #pragma endregion 
-#pragma endregion 
+#pragma endregion
 
+    DirectionalLight *dirLight = new DirectionalLight();
+    WorldManager::instance().p_lightManager->addLight(dirLight);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_FRONT);
+    glFrontFace(GL_CW);
+    
     glfwSetTime(0.0);
     Time::instance()._lastUpdatedTime = 0.0;
 	double LAST_TIME_STATISTIC = 0.0;
@@ -260,23 +254,28 @@ void Application::run()
 		FRAME_COUNT++;
         // Input
         Input::instance().update();
-        cameraController.update();
+        WorldManager::instance().update();
         // start Render
         // Bind render data to FBO to quadVAO
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
         glEnable(GL_DEPTH_TEST);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+        
+        
         shaderProgram1.Activate();
         shaderProgram1.setMat4("model", transform);
-        shaderProgram1.setMat4("view", cam.getViewMatrix());
-        shaderProgram1.setMat4("projection", cam.getPerspectiveProjectionMatrix());
-        mesh.draw(shaderProgram1, cam, "", false);
-        
-        model1.draw(cam);
+        shaderProgram1.setMat4("view",  WorldManager::instance().p_mainCamera->getViewMatrix());
+        shaderProgram1.setMat4("projection", WorldManager::instance().p_mainCamera->getPerspectiveProjectionMatrix());
+        mesh.draw(shaderProgram1, *WorldManager::instance().p_mainCamera, "", false);
 
-        skybox.draw(cam);
+        glEnable(GL_CULL_FACE);
+        glFrontFace(GL_CW);
+        glCullFace(GL_FRONT);
+        model1->draw(*WorldManager::instance().p_mainCamera);
+
+
+        WorldManager::instance().draw();
         // now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -307,13 +306,15 @@ void Application::run()
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
         // draw GUI
-        GUI::instance().draw();
+        if(_drawGUI)
+            GUI::instance().draw();
               
         glfwPollEvents();
         Input::instance().reset();
         glfwSwapBuffers(p_glfwWindow);
-
     }
+
+    clean();
 }
 
 void Application::setVsync(bool isOn)
@@ -325,5 +326,15 @@ void Application::setVsync(bool isOn)
 void Application::framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
+}
+
+void Application::clean()
+{
+    WorldManager::instance().clean();
+
+    Input::instance().clean();
+    GUI::instance().clean();
+    glfwDestroyWindow(p_glfwWindow);
+    glfwTerminate();
 }
 

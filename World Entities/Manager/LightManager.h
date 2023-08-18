@@ -22,6 +22,8 @@ private:
 
     void clean();
     friend class Application;
+    friend class GUI;
+    friend class WorldManager;
 };
 
 #endif
