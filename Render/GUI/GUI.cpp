@@ -270,19 +270,21 @@ void GUI::draw()
 	if (ImGui::TreeNode("Shader Manager"))
 	{
 	    static auto shaderManager = WorldManager::instance().p_shaderManager;
-	    ImGui::Text("Total shader %d", shaderManager->shaderMaps.size());
-	    if(ImGui::BeginTable("Shader Table", 2))
-	    {
-	        for (auto shader : shaderManager->shaderMaps)
-	        {
-	            ImGui::TableNextRow();
-	            ImGui::TableNextColumn();
-	            ImGui::Text("Name %s", shader.first);
-	            ImGui::TableNextColumn();
-	            ImGui::Text("Id %s", shader.second->getId());
-	        }
-	        ImGui::EndTable();
-	    }
+		if (shaderManager != nullptr) {
+			ImGui::Text("Total shader %d", shaderManager->shaderMaps.size());
+			if(ImGui::BeginTable("Shader Table", 2))
+			{
+				for (auto shader : shaderManager->shaderMaps)
+				{
+					/*ImGui::TableNextRow();
+					ImGui::TableNextColumn();
+					ImGui::Text("Name %s", shader.first);
+					ImGui::TableNextColumn();
+					ImGui::Text("Id %s", shader.second->getId());*/
+				}
+				ImGui::EndTable();
+			}
+		}
 	    ImGui::TreePop();
 	}
     if (ImGui::CollapsingHeader("Post Processing"))

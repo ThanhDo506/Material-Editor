@@ -55,9 +55,12 @@ void ShaderManager::update()
 
 void ShaderManager::clean()
 {
+	unsigned count = 0;
 	for (auto& x : shaderMaps) {
+		count++;
 		x.second->Delete();
 		delete x.second;
 	}
 	shaderMaps.clear();
+	AppLog("SHADER_MANAGER::Clean " + std::to_string(count) + " shader(s)");
 }

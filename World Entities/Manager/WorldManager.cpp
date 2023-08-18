@@ -89,6 +89,7 @@ void WorldManager::clean()
     delete p_mainCameraController;
     p_mainCameraController = nullptr;
 
+    p_shaderManager->clean();
     delete p_shaderManager;
     p_shaderManager = nullptr;
 

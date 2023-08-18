@@ -31,13 +31,13 @@ void LightManager::addLight(Light* light)
 				break;
 			default:
 				// TODO: throw Exception here
-				throw Debug::Exception(Debug::WARNING, "UNKNOWN TYPE OF LIGHT");
+				throw Debug::Exception(Debug::WARNING, "LIGHT_MANAGER::UNKNOWN TYPE OF LIGHT");
 				break;
 			}
 		}
 		else
 		{
-			throw Debug::Exception(Debug::WARNING, "LIGHT HAD BEEN APPLIED");
+			throw Debug::Exception(Debug::WARNING, "LIGHT_MANAGER::LIGHT HAD BEEN APPLIED");
 		}
 	}
 	catch (std::exception const &e) {
@@ -63,7 +63,7 @@ void LightManager::removeLight(Light* light)
             light->setLightIndex(_spotCount);
             _spotCount--;
         default:
-            throw Debug::Exception(Debug::LOG_TYPE::WARNING, "UNKNOWN TYPE OF LIGHT");
+            throw Debug::Exception(Debug::LOG_TYPE::WARNING, "LIGHT_MANAGER::UNKNOWN TYPE OF LIGHT");
         }
         auto it = std::find(_lights.begin(), _lights.end(), light);
         if(it != _lights.end())
@@ -72,7 +72,7 @@ void LightManager::removeLight(Light* light)
             delete light;
         } else
         {
-            throw Debug::Exception(Debug::LOG_TYPE::WARNING, "Light isn't signed up in LightManager");
+            throw Debug::Exception(Debug::LOG_TYPE::WARNING, "LIGHT_MANAGER::Light isn't signed up");
         }
     } catch (const std::exception &e)
     {
@@ -100,5 +100,5 @@ void LightManager::clean()
         delete light;
     	i++;
     }
-	AppLog("Clean " + std::to_string(i) + " light(s)");
+	AppLog("LIGHT_MANAGER::Clean " + std::to_string(i) + " light(s)");
 }
