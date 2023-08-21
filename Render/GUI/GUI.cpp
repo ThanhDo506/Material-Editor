@@ -132,14 +132,17 @@ void GUI::draw()
     {
         for (auto i : WorldManager::instance()._entities)
         {
-            // if(i->_name == "Model")
-            // {
-            //     auto material = &dynamic_cast<Model*>(i)->_material;
-            //     if(material != nullptr)
-            //     {
-            //         AppLog("asdasdasdas");
-            //     }
-            // }
+            if (ImGui::TreeNode("Transform"))
+            {
+                static glm::vec3 rotation = i->transform.eulerAngles();
+                ImGui::DragFloat3("Position", &i->transform.position[0]);
+                if (ImGui::DragFloat3("Rotation", &rotation[0]))
+                {
+                    i->transform.rotation = Transform::eulerAnglesToQuaternion(rotation);
+                }
+                ImGui::DragFloat3("Scale", &i->transform.scale[0]);
+                ImGui::TreePop();
+            }
         }
         ImGui::TreePop();
     }

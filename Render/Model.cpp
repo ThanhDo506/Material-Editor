@@ -15,11 +15,6 @@ Model::Model(std::string const  &path,
     _name           = name;
     p_parent        = parent;
     p_shader = new Shader(vertShaderpath.c_str(), fragShaderpath.c_str());
-    if(p_shader == nullptr)
-    {
-        std::cout << "WWTF\n";
-    }
-    WorldManager::instance().p_shaderManager->addShader(p_shader, _name);
 }
 
 Model::Model(std::string const& path, Shader* shader, Transform transform, std::string const& name, Entity* parent)
@@ -29,7 +24,6 @@ Model::Model(std::string const& path, Shader* shader, Transform transform, std::
     _name           = name;
     p_parent        = parent;
     p_shader        = shader;
-    WorldManager::instance().p_shaderManager->addShader(p_shader, _name);
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene)

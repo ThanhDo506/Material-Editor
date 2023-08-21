@@ -127,7 +127,7 @@ void Application::run()
     TextureMap diffuse = TextureMap(
         Texture::load("Resources/models/guitar/diffuse.jpg"), TextureMapType::DIFFUSE);
     model1->_material._diffuseMaps.push_back(diffuse);
-
+    WorldManager::instance().addEntity(model1);
 #pragma region my FBO
     Shader screenShader("Resources/GLSL/FrameBuffer.vert", "Resources/GLSL/FrameBuffer.frag");
     screenShader.Activate();
