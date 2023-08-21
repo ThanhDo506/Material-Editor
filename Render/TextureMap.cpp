@@ -5,6 +5,13 @@ void TextureMap::clean()
     _texture.clean();
 }
 
+TextureMap TextureMap::defaultTextureMap()
+{
+    static const std::string defaultImage = "Resources/images/metal.png";
+    static TextureMap defaultTexture = TextureMap(Texture::load(defaultImage.c_str()), TextureMapType::SPECULAR);
+    return defaultTexture;
+}
+
 std::string TextureMap::to_string(TextureMapType type)
 {
     switch (type)

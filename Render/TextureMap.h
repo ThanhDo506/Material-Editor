@@ -60,7 +60,8 @@ public:
     TextureMapType getType() const { return _type; }
 
     void clean();
-    
+
+    static TextureMap defaultTextureMap();
     static std::string to_string(TextureMapType type);
 private:
     TextureMapType _type;
@@ -69,6 +70,7 @@ private:
     friend class Model;
     friend class Mesh;
     friend class GUI;
+    friend class Material;
 };
 
 #endif

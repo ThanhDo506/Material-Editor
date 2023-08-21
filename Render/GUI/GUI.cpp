@@ -19,25 +19,24 @@ GUI::GUI()
 void GUI::textureModelHandle(TextureMap* texture)
 {
     std::string type = TextureMap::to_string(texture->getType());
-    ImGui::SeparatorText(type.c_str());
-    ImGui::Image((void*)static_cast<intptr_t>(texture->_texture._id), ImVec2(128, 128));
-    ImGui::SameLine();
-    if (ImGui::Button(type.c_str()))
-        ImGuiFileDialog::Instance()->OpenDialog(type, "Choose " + type, ".png,.jpg", ".");
-    // display
-    if (ImGuiFileDialog::Instance()->Display(type)) 
+    if (ImGui::TreeNode(type.c_str()))
     {
-        if (ImGuiFileDialog::Instance()->IsOk())
+        ImGui::Image((void*)static_cast<intptr_t>(texture->_texture._id), ImVec2(96, 96));
+        ImGui::Text(std::string("Path: " + texture->_texture._path).c_str());
+        if (ImGui::Button(type.c_str()))
+            ImGuiFileDialog::Instance()->OpenDialog(type, "Choose " + type, ".png,.jpg", ".");
+        // display
+        if (ImGuiFileDialog::Instance()->Display(type)) 
         {
-            std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
-            //texture->loadTexture(filePathName, texture->_type, GL_UNSIGNED_BYTE, false);
-            Texture newTexture;
-            newTexture.load(filePathName.c_str());
-            texture->clean();
-            delete texture;
-            texture = new TextureMap(newTexture,texture->getType());
+            if (ImGuiFileDialog::Instance()->IsOk())
+            {
+                std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
+                texture->_texture.clean();
+                texture->_texture = Texture::load(filePathName.c_str());
+            }
+            ImGuiFileDialog::Instance()->Close();
         }
-        ImGuiFileDialog::Instance()->Close();
+        ImGui::TreePop();
     }
 }
 
@@ -142,6 +141,18 @@ void GUI::draw()
                 }
                 ImGui::DragFloat3("Scale", &i->transform.scale[0]);
                 ImGui::TreePop();
+            }
+            Material *material = &dynamic_cast<Model*>(i)->_material;
+            if (material)
+            {
+                // TODO must init map
+                textureModelHandle(&material->_diffuseMaps[0]);
+                textureModelHandle(&material->_specularMaps[0]);
+                textureModelHandle(&material->_roughnessMaps[0]);
+                textureModelHandle(&material->_metallicMaps[0]);
+                textureModelHandle(&material->_aoMaps[0]);
+                textureModelHandle(&material->_emissionMaps[0]);
+                textureModelHandle(&material->_normalMap);
             }
         }
         ImGui::TreePop();

@@ -159,6 +159,8 @@
     <Content Include="Resources\GLSL\guitarShader.vert" />
     <Content Include="Resources\GLSL\SkyShader.frag" />
     <Content Include="Resources\GLSL\SkyShader.vert" />
+    <Content Include="Resources\GLSL\test.frag" />
+    <Content Include="Resources\GLSL\test.vert" />
     <Content Include="Resources\GLSL\vertShader.glsl" />
     <Content Include="Resources\ibl\brown_photostudio_02_2k.hdr" />
     <Content Include="Resources\ibl\dikhololo_night_2k.hdr" />

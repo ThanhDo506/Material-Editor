@@ -126,7 +126,12 @@ void Application::run()
         "Resources/GLSL/guitarShader.frag");
     TextureMap diffuse = TextureMap(
         Texture::load("Resources/models/guitar/diffuse.jpg"), TextureMapType::DIFFUSE);
+    TextureMap specular = TextureMap(Texture::load("Resources/models/guitar/specular.jpg"), TextureMapType::SPECULAR);
+
     model1->_material._diffuseMaps.push_back(diffuse);
+    model1->_material._specularMaps.push_back(specular);
+
+    
     WorldManager::instance().addEntity(model1);
 #pragma region my FBO
     Shader screenShader("Resources/GLSL/FrameBuffer.vert", "Resources/GLSL/FrameBuffer.frag");

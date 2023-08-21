@@ -106,7 +106,7 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     //
     // std::vector<Texture> roughnessMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE_ROUGHNESS, Texture::Type::ROUGHNESS);
     // textures.insert(textures.end(), roughnessMaps.begin(), roughnessMaps.end());
-
+    textures.clear();
     return Mesh(vertices, indices, textures);
 }
 
@@ -138,9 +138,9 @@ void Model::loadMaterial(aiMaterial* mat, aiTexture textureType, TextureMapType 
 void Model::draw(Camera& camera)
 {
     p_shader->Activate();
-    p_shader->setMat4("_Transform", transform.getMatrixTransform());
-    p_shader->setMat4("_Projection", camera.getPerspectiveProjectionMatrix());
-    p_shader->setMat4("_View", camera.getViewMatrix());
+    p_shader->setMat4("_TransformMatrix", transform.getMatrixTransform());
+    p_shader->setMat4("_ProjectionMatrix", camera.getPerspectiveProjectionMatrix());
+    p_shader->setMat4("_ViewMatrix", camera.getViewMatrix());
     int diffuseMapCount = 0;
     int specularCount = 0;
     int metallicMapCount = 0;
@@ -215,7 +215,7 @@ void Model::draw(Camera& camera)
     // draw Meshes
     for (unsigned int i = 0; i < _meshes.size(); i++)
     {
-        // _meshes[i].draw(shader,camera,"", true);
+        // _meshes[i].draw(*p_shader,camera,"", true);
         // or call direct opengl func for better performance about 5 - 10 %
         // have tested by DoNT
         // maybe latency when call function like static_cast<GLsizei>(_meshes[i]._indices.size()) below

@@ -21,14 +21,11 @@ Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<GLuint>& indices, std::vec
     _vao.linkAttrib(_vbo, 3, 2, GL_FLOAT, sizeof(Vertex), (void*)(offsetof(Vertex, texCoord)));
     // Tangent 3 float
     _vao.linkAttrib(_vbo, 4, 3, GL_FLOAT, sizeof(Vertex), (void*)(offsetof(Vertex, tangent)));
-    // bone weight MAX_BONE_INFLUENCE = 4 float
-    //_vao.linkAttrib(_vbo, 6, MAX_BONE_INFLUENCE, GL_FLOAT, sizeof(Vertex), (void*)(17 * sizeof(float)));
-    // bone ID MAX_BONE_INFLUENCE = 4 int
-    //_vao.linkAttrib(_vbo, 7, MAX_BONE_INFLUENCE, GL_INT, sizeof(Vertex), (void*)(21 * sizeof(float)));
     
     _vao.Unbind();
     _vbo.Unbind();
     _ebo.Unbind();
+
 }
 
 Mesh::~Mesh()
@@ -47,18 +44,18 @@ void Mesh::draw(Shader& shader,
         //shader.Activate();
         shader.setMat4("_View", camera.getViewMatrix());
         shader.setMat4("_Projection", camera.getPerspectiveProjectionMatrix());
-    }
-    for (unsigned int i = 0; i < _textures.size(); i++)
-    {
-        glActiveTexture(GL_TEXTURE0 + i);
-        std::string type = TextureMap::to_string(_textures[i].getType());
-        if(!uniformPrefix.empty())
+        for (unsigned int i = 0; i < _textures.size(); i++)
         {
-            type = uniformPrefix + type;
+            glActiveTexture(GL_TEXTURE0 + i);
+            std::string type = TextureMap::to_string(_textures[i].getType());
+            if(!uniformPrefix.empty())
+            {
+                type = uniformPrefix + type;
+            }
+            // call directly
+            glUniform1i(glGetUniformLocation(shader._id, type.c_str()), i);
+            glBindTexture(GL_TEXTURE_2D, _textures[i]._texture._id);
         }
-        // call directly
-        glUniform1i(glGetUniformLocation(shader._id, type.c_str()), i);
-        glBindTexture(GL_TEXTURE_2D, _textures[i]._texture._id);
     }
     glBindVertexArray(_vao._id);
     // Draw the mesh

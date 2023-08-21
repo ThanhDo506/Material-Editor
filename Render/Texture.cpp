@@ -23,7 +23,7 @@ Texture Texture::load(const char* path, bool isSRGB, const TextureParams& params
 {
     Texture texture;
     texture._type = TextureType::TEXTURE_2D;
-
+    texture._path = std::string(path);
     stbi_set_flip_vertically_on_load(params.flipVerticallyOnLoad);
     unsigned char* data =
         stbi_load(path, &texture._width, &texture._height, &texture._numChannels,0);

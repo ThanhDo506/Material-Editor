@@ -138,6 +138,7 @@ public:
     int getNumChannels() const { return _numChannels; }
     int getNumMips() const { return _numMips; }
     GLenum getInternalFormat() const { return _internalFormat; }
+
 private:
     GLuint _id;
     std::string _path;

@@ -38,7 +38,6 @@ public:
     Light::Attenuation      _emissionAttenuation;
     float                   _shininess;
     float                   _metallic;
-
     Material();
 };
 
