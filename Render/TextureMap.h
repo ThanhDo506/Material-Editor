@@ -53,8 +53,8 @@ class TextureMap
 {
 public:
     TextureMap(const Texture& texture, TextureMapType type = TextureMapType::NONE)
-        : _texture(texture), _type(type) {}
-    TextureMap() { _type = TextureMapType::NONE; }
+        : _texture(texture), _type(type) { _initialized = true; }
+    TextureMap() { _type = TextureMapType::NONE; _initialized = false; }
     
     Texture& getTexture() { return _texture; }
     TextureMapType getType() const { return _type; }
@@ -66,6 +66,7 @@ public:
 private:
     TextureMapType _type;
     Texture _texture;
+    bool _initialized = false;
 
     friend class Model;
     friend class Mesh;

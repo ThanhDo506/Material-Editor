@@ -124,13 +124,6 @@ void Application::run()
     Model *model1 = new Model("Resources/models/guitar/backpack.obj",
         "Resources/GLSL/guitarShader.vert",
         "Resources/GLSL/guitarShader.frag");
-    TextureMap diffuse = TextureMap(
-        Texture::load("Resources/models/guitar/diffuse.jpg"), TextureMapType::DIFFUSE);
-    TextureMap specular = TextureMap(Texture::load("Resources/models/guitar/specular.jpg"), TextureMapType::SPECULAR);
-
-    model1->_material._diffuseMaps.push_back(diffuse);
-    model1->_material._specularMaps.push_back(specular);
-
     
     WorldManager::instance().addEntity(model1);
 #pragma region my FBO
@@ -273,17 +266,11 @@ void Application::run()
         shaderProgram1.setMat4("view",  WorldManager::instance().p_mainCamera->getViewMatrix());
         shaderProgram1.setMat4("projection", WorldManager::instance().p_mainCamera->getPerspectiveProjectionMatrix());
         mesh.draw(shaderProgram1, *WorldManager::instance().p_mainCamera, "", false);
-
-        glEnable(GL_CULL_FACE);
-        glFrontFace(GL_CW);
-        glCullFace(GL_FRONT);
-        model1->draw(*WorldManager::instance().p_mainCamera);
-
-
+        
         WorldManager::instance().draw();
         // now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+        
         
         // glDisable(GL_DEPTH_TEST); // disable depth test so screen-space quad isn't discarded due to depth test.
         // // clear all relevant buffers
@@ -296,14 +283,14 @@ void Application::run()
         // glBindVertexArray(quadVAO);
         // glBindTexture(GL_TEXTURE_2D, textureColorbuffer);	// use the color attachment texture as the texture of the quad plane
         // glDrawArrays(GL_TRIANGLES, 0, 6);
-
+        
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         hdrShader.Activate();
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, colorBuffer);
         hdrShader.setInt("hdr", hdr);
         hdrShader.setFloat("exposure", exposure);
-
+        
         // after bind FBO to quadVAO
         // now render quadVAO
         glBindVertexArray(quadVAO);

@@ -83,9 +83,9 @@ void LightManager::removeLight(Light* light)
 void LightManager::updateShader(Shader& shader)
 {
     shader.Activate();
-    shader.setInt("DirectionalLightCount", static_cast<int>(_directionalCount));
-    shader.setInt("PointLightCount", static_cast<int>(_pointCount));
-    shader.setInt("SpotLightCount", static_cast<int>(_spotCount));
+    shader.setInt("_DirectionalLightCount", static_cast<int>(_directionalCount));
+    shader.setInt("_PointLightCount", static_cast<int>(_pointCount));
+    shader.setInt("_SpotLightCount", static_cast<int>(_spotCount));
     for (auto light : _lights)
     {
         light->updateShader(shader);

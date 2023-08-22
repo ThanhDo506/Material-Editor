@@ -1,5 +1,6 @@
 ﻿#include "Model.h"
 
+#include "../utilities/utilities.h"
 #include "../World Entities/Manager/ShaderManager.h"
 #include "../World Entities/Manager/WorldManager.h"
 
@@ -15,6 +16,27 @@ Model::Model(std::string const  &path,
     _name           = name;
     p_parent        = parent;
     p_shader = new Shader(vertShaderpath.c_str(), fragShaderpath.c_str());
+    TextureMap defaultTexture;
+    defaultTexture._type = TextureMapType::DIFFUSE;
+    _material._diffuseMaps.push_back(defaultTexture);
+    
+    defaultTexture._type = TextureMapType::SPECULAR;
+    _material._specularMaps.push_back(defaultTexture);
+
+    defaultTexture._type = TextureMapType::NORMAL;
+    _material._normalMap = defaultTexture;
+
+    defaultTexture._type = TextureMapType::METALLIC;
+    _material._metallicMaps.push_back(defaultTexture);
+
+    defaultTexture._type = TextureMapType::AO;
+    _material._aoMaps.push_back(defaultTexture);
+
+    defaultTexture._type = TextureMapType::ROUGHNESS;
+    _material._roughnessMaps.push_back(defaultTexture);
+
+    defaultTexture._type = TextureMapType::EMISSION;
+    _material._emissionMaps.push_back(defaultTexture);
 }
 
 Model::Model(std::string const& path, Shader* shader, Transform transform, std::string const& name, Entity* parent)
@@ -24,6 +46,27 @@ Model::Model(std::string const& path, Shader* shader, Transform transform, std::
     _name           = name;
     p_parent        = parent;
     p_shader        = shader;
+    TextureMap defaultTexture;
+    defaultTexture._type = TextureMapType::DIFFUSE;
+    _material._diffuseMaps.push_back(defaultTexture);
+    
+    defaultTexture._type = TextureMapType::SPECULAR;
+    _material._specularMaps.push_back(defaultTexture);
+
+    defaultTexture._type = TextureMapType::NORMAL;
+    _material._normalMap = defaultTexture;
+
+    defaultTexture._type = TextureMapType::METALLIC;
+    _material._metallicMaps.push_back(defaultTexture);
+
+    defaultTexture._type = TextureMapType::AO;
+    _material._aoMaps.push_back(defaultTexture);
+
+    defaultTexture._type = TextureMapType::ROUGHNESS;
+    _material._roughnessMaps.push_back(defaultTexture);
+
+    defaultTexture._type = TextureMapType::EMISSION;
+    _material._emissionMaps.push_back(defaultTexture);
 }
 
 void Model::processNode(aiNode* node, const aiScene* scene)
@@ -92,21 +135,30 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
     // // process materials
     // aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
     //
-    // std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, Texture::Type::ALBEDO);
-    // textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
+    // std::vector<TextureMap> diffuseMaps = loadMaterial(material,TextureMapType::DIFFUSE);
+    // _material._diffuseMaps.insert(_material._diffuseMaps.end(), diffuseMaps.begin(), diffuseMaps.end());
     //
-    // std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_NORMALS, Texture::Type::NORMAL);
-    // textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
+    // std::vector<TextureMap> specularMaps = loadMaterial(material,TextureMapType::SPECULAR);
+    // _material._specularMaps.insert(_material._specularMaps.end(), specularMaps.begin(), specularMaps.end());
     //
-    // std::vector<Texture> aoMaps = loadMaterialTextures(material, aiTextureType_AMBIENT_OCCLUSION, Texture::Type::AMBIENT_OCCLUSION);
-    // textures.insert(textures.end(), aoMaps.begin(), aoMaps.end());
+    // std::vector<TextureMap> metallicMaps = loadMaterial(material,TextureMapType::METALLIC);
+    // _material._metallicMaps.insert(_material._metallicMaps.end(), metallicMaps.begin(), metallicMaps.end());
     //
-    // std::vector<Texture> emissionMaps = loadMaterialTextures(material, aiTextureType_EMISSIVE, Texture::Type::EMISSION);
-    // textures.insert(textures.end(), emissionMaps.begin(), emissionMaps.end());
+    // std::vector<TextureMap> normalMaps = loadMaterial(material,TextureMapType::NORMAL);
+    // if (!normalMaps.empty())
+    // {
+    //     _material._normalMap = normalMaps[0];
+    // }
     //
-    // std::vector<Texture> roughnessMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE_ROUGHNESS, Texture::Type::ROUGHNESS);
-    // textures.insert(textures.end(), roughnessMaps.begin(), roughnessMaps.end());
-    textures.clear();
+    // std::vector<TextureMap> aoMaps = loadMaterial(material, TextureMapType::AO);
+    // _material._aoMaps.insert(_material._aoMaps.end(), aoMaps.begin(), aoMaps.end());
+    //
+    // std::vector<TextureMap> emissionMaps = loadMaterial(material, TextureMapType::EMISSION);
+    // _material._emissionMaps.insert(_material._emissionMaps.end(), emissionMaps.begin(), emissionMaps.end());
+    //
+    // std::vector<TextureMap> roughnessMaps = loadMaterial(material, TextureMapType::ROUGHNESS);
+    // _material._roughnessMaps.insert(_material._roughnessMaps.end(), roughnessMaps.begin(), roughnessMaps.end());
+    //
     return Mesh(vertices, indices, textures);
 }
 
@@ -117,7 +169,8 @@ void Model::loadModel(std::string const& path)
     const aiScene*   scene = importer.ReadFile(
         path, aiProcess_Triangulate |
         aiProcess_GenSmoothNormals |
-        aiProcess_CalcTangentSpace);
+        aiProcess_CalcTangentSpace |
+        aiProcess_FlipUVs);
     // check for errors
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
         {
@@ -131,7 +184,7 @@ void Model::loadModel(std::string const& path)
     processNode(scene->mRootNode, scene);
 }
 
-void Model::loadMaterial(aiMaterial* mat, aiTexture textureType, TextureMapType tex)
+std::vector<TextureMap> Model::loadMaterial(aiMaterial* mat, TextureMapType tex)
 {
 }
 
@@ -141,6 +194,14 @@ void Model::draw(Camera& camera)
     p_shader->setMat4("_TransformMatrix", transform.getMatrixTransform());
     p_shader->setMat4("_ProjectionMatrix", camera.getPerspectiveProjectionMatrix());
     p_shader->setMat4("_ViewMatrix", camera.getViewMatrix());
+    p_shader->setVec4("_Material.albedo", _material._albedo);
+    p_shader->setFloat("_Material.shininess", _material._shininess);
+    p_shader->setFloat("_Material.metallic", _material._metallic);
+    p_shader->setFloat("_Material.normalMultiplier", _material._normalMultiplier);
+    p_shader->setFloat("_Material.roughnessMultiplier", _material._roughnessMultiplier);
+    p_shader->setBool("_Material.emissionOn", _material._emissionOn);
+    p_shader->setVec3("F", _material._f0);
+    p_shader->setBool("_Material.useMetallicMap", _material._useMetallicMap);
     int diffuseMapCount = 0;
     int specularCount = 0;
     int metallicMapCount = 0;
@@ -151,60 +212,88 @@ void Model::draw(Camera& camera)
     // 1 DIFFUSE
     for (unsigned int i = 0; i < _material._diffuseMaps.size(); i++)
     {
-        glActiveTexture(GL_TEXTURE0 + count);
-        glBindTexture(GL_TEXTURE_2D, _material._diffuseMaps[i]._texture._id);
-        p_shader->setInt("_Material.diffuseMaps[" + std::to_string(i) + "]", diffuseMapCount++);
-        count++;
+        if (_material._diffuseMaps[i]._initialized)
+        {
+            // AppLog("add diffuse" + i);
+            glActiveTexture(GL_TEXTURE0 + count);
+            glBindTexture(GL_TEXTURE_2D, _material._diffuseMaps[i]._texture._id);
+            p_shader->setInt("_Material.diffuseMaps[" + std::to_string(i) + "]", diffuseMapCount++);
+            count++;
+        }
     }
     p_shader->setInt("_Material.diffuseMapsCount", diffuseMapCount);
     // 2 SPECULAR
     for (unsigned int i = 0; i < _material._specularMaps.size(); i++)
     {
-        glActiveTexture(GL_TEXTURE0 + count);
-        glBindTexture(GL_TEXTURE_2D, _material._specularMaps[i]._texture._id);
-        p_shader->setInt("_Material.specularMaps[" + std::to_string(i) + "]", specularCount++);
-        count++;
+        if (_material._specularMaps[i]._initialized)
+        {
+            // AppLog("add specu" + i);
+            glActiveTexture(GL_TEXTURE0 + count);
+            glBindTexture(GL_TEXTURE_2D, _material._specularMaps[i]._texture._id);
+            p_shader->setInt("_Material.specularMaps[" + std::to_string(i) + "]", specularCount++);
+            count++;
+        }
     }
     p_shader->setInt("_Material.specularMapsCount", specularCount);
     // 3 Roughness
     for (unsigned int i = 0; i < _material._roughnessMaps.size(); i++)
     {
-        glActiveTexture(GL_TEXTURE0 + count);
-        glBindTexture(GL_TEXTURE_2D, _material._roughnessMaps[i]._texture._id);
-        p_shader->setInt("_Material.roughnessMaps[" + std::to_string(i) + "]", roughnessMapCount++);
-        count++;
+        if (_material._roughnessMaps[i]._initialized)
+        {
+            // AppLog("add roughness" + i);
+            glActiveTexture(GL_TEXTURE0 + count);
+            glBindTexture(GL_TEXTURE_2D, _material._roughnessMaps[i]._texture._id);
+            p_shader->setInt("_Material.roughnessMaps[" + std::to_string(i) + "]", roughnessMapCount++);
+            count++;
+        }
     }
     p_shader->setInt("_Material.roughnessMapsCount", roughnessMapCount);
     // 4 AO
     for (unsigned int i = 0; i < _material._aoMaps.size(); i++)
     {
-        glActiveTexture(GL_TEXTURE0 + count);
-        glBindTexture(GL_TEXTURE_2D, _material._aoMaps[i]._texture._id);
-        p_shader->setInt("_Material.aoMaps[" + std::to_string(i) + "]", aoMapCount++);
-        count++;
+        if (_material._aoMaps[i]._initialized)
+        {
+            // AppLog("add ao" + i);
+            glActiveTexture(GL_TEXTURE0 + count);
+            glBindTexture(GL_TEXTURE_2D, _material._aoMaps[i]._texture._id);
+            p_shader->setInt("_Material.aoMaps[" + std::to_string(i) + "]", aoMapCount++);
+            count++;
+        }
     }
     p_shader->setInt("_Material.aoMapsCount", aoMapCount);
     // 5 Metallic
     for (unsigned int i = 0; i < _material._metallicMaps.size(); i++)
     {
-        glActiveTexture(GL_TEXTURE0 + count);
-        glBindTexture(GL_TEXTURE_2D, _material._metallicMaps[i]._texture._id);
-        p_shader->setInt("_Material.metallicMaps[" + std::to_string(i) + "]", metallicMapCount++);
-        count++;
+        if (_material._metallicMaps[i]._initialized)
+        {
+            // AppLog("add metallic " + i);
+            glActiveTexture(GL_TEXTURE0 + count);
+            glBindTexture(GL_TEXTURE_2D, _material._metallicMaps[i]._texture._id);
+            p_shader->setInt("_Material.metallicMaps[" + std::to_string(i) + "]", metallicMapCount++);
+            count++;
+        }
     }
     p_shader->setInt("_Material.metallicMapsCount", metallicMapCount);
     // 6 Emission
-    for (unsigned int i = 0; i < _material._emissionMaps.size(); i++)
+    if (_material._emissionOn)
     {
-        glActiveTexture(GL_TEXTURE0 + count);
-        glBindTexture(GL_TEXTURE_2D, _material._emissionMaps[i]._texture._id);
-        p_shader->setInt("_Material.emissionMaps[" + std::to_string(i) + "]", emissionMapCount++);
-        count++;
+        for (unsigned int i = 0; i < _material._emissionMaps.size(); i++)
+        {
+            if (_material._aoMaps[i]._initialized)
+            {
+                // AppLog("add emission " + i);
+                glActiveTexture(GL_TEXTURE0 + count);
+                glBindTexture(GL_TEXTURE_2D, _material._emissionMaps[i]._texture._id);
+                p_shader->setInt("_Material.emissionMaps[" + std::to_string(i) + "]", emissionMapCount++);
+                count++;
+            }
+        }
+        p_shader->setInt("_Material.emissionMapsCount", emissionMapCount);
     }
-    p_shader->setInt("_Material.emissionMapsCount", emissionMapCount);
     // 7 Normal
-    if(_material._normalMap._type != TextureMapType::NONE)
+    if(_material._normalMap._initialized)
     {
+        // AppLog("add normal ");
         glActiveTexture(GL_TEXTURE0 + count);
         glBindTexture(GL_TEXTURE_2D, _material._normalMap._texture._id);
         p_shader->setInt("_Material.normalMap", count);
@@ -239,6 +328,8 @@ void Model::clean()
     {
         mesh.clean();
     }
+    _material = Material();
+    _directory = "";
     // don't clean Shader
     // ShaderManager 'll do it :D
     p_shader = nullptr;

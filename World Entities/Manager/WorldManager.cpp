@@ -51,17 +51,23 @@ void WorldManager::draw()
         {
 			throw Debug::Exception(Debug::ERROR, "Main camera is null");
         }
-        
+
         // draw skybox
         glDisable(GL_CULL_FACE);
         p_skybox->draw(*p_mainCamera);
 
         // draw Entity
+        glEnable(GL_CULL_FACE);
+        glFrontFace(GL_CW);
+        glCullFace(GL_FRONT);
         for(auto entity : _entities)
         {
             auto model = dynamic_cast<Model*>(entity);
             if(entity->_isActive && model)
             {
+                // update lighting in shader
+                p_lightManager->updateShader(*model->p_shader);
+
                 model->draw(*p_mainCamera);
             }
         }

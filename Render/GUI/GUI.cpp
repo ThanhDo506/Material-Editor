@@ -21,18 +21,28 @@ void GUI::textureModelHandle(TextureMap* texture)
     std::string type = TextureMap::to_string(texture->getType());
     if (ImGui::TreeNode(type.c_str()))
     {
-        ImGui::Image((void*)static_cast<intptr_t>(texture->_texture._id), ImVec2(96, 96));
-        ImGui::Text(std::string("Path: " + texture->_texture._path).c_str());
+        if (texture->_initialized)
+        {
+            ImGui::Image((void*)static_cast<intptr_t>(texture->_texture._id), ImVec2(96, 96));
+            ImGui::Text(std::string("Path: " + texture->_texture._path).c_str());
+        } else
+        {
+            ImGui::Text("This texture isn't initilized");
+        }
+        
         if (ImGui::Button(type.c_str()))
             ImGuiFileDialog::Instance()->OpenDialog(type, "Choose " + type, ".png,.jpg", ".");
         // display
+        static bool isSRGB = false;
+        ImGui::Checkbox("sRGB", &isSRGB);
         if (ImGuiFileDialog::Instance()->Display(type)) 
         {
             if (ImGuiFileDialog::Instance()->IsOk())
             {
                 std::string filePathName = ImGuiFileDialog::Instance()->GetFilePathName();
                 texture->_texture.clean();
-                texture->_texture = Texture::load(filePathName.c_str());
+                texture->_texture = Texture::load(filePathName.c_str(), isSRGB);
+                texture->_initialized = true;
             }
             ImGuiFileDialog::Instance()->Close();
         }
@@ -143,16 +153,30 @@ void GUI::draw()
                 ImGui::TreePop();
             }
             Material *material = &dynamic_cast<Model*>(i)->_material;
-            if (material)
+            if (material && ImGui::TreeNode("Material Setting"))
             {
                 // TODO must init map
+                ImGui::ColorEdit4("Base Color", &material->_albedo[0]);
+                ImGui::DragFloat3("F0", &material->_f0[0], 0.01f, 0., 1);
                 textureModelHandle(&material->_diffuseMaps[0]);
-                textureModelHandle(&material->_specularMaps[0]);
+                // textureModelHandle(&material->_specularMaps[0]);
+                // ImGui::SliderFloat("Shininess", &material->_shininess, 1, 1024, "%.f");
                 textureModelHandle(&material->_roughnessMaps[0]);
-                textureModelHandle(&material->_metallicMaps[0]);
+                ImGui::DragFloat("Roughness multiplier", &material->_roughnessMultiplier, 0.001, -5.0, 5.0);
+                ImGui::Checkbox("Has metallic map", &material->_useMetallicMap);
+                if (material->_useMetallicMap)
+                {
+                    textureModelHandle(&material->_metallicMaps[0]);
+                } else
+                {
+                    ImGui::SliderFloat("Metallic value", &material->_metallic,  0.0001, 1.0);
+                }
                 textureModelHandle(&material->_aoMaps[0]);
+                ImGui::Checkbox("Active emission", &material->_emissionOn);
                 textureModelHandle(&material->_emissionMaps[0]);
                 textureModelHandle(&material->_normalMap);
+                ImGui::DragFloat("Normal multiplier", &material->_normalMultiplier, 0.0025, -10, 10.0);
+                ImGui::TreePop();
             }
         }
         ImGui::TreePop();
@@ -174,8 +198,8 @@ void GUI::draw()
                         ImGui::SeparatorText("Index");
                         ImGui::DragFloat3("Direction", &dirLight->_direction[0]);
                         ImGui::ColorEdit3("Color", &dirLight->_ambient[0]);
-                        ImGui::DragFloat3("Diffuse", &dirLight->_diffuse[0]);
-                        ImGui::DragFloat3("Specular", &dirLight->_specular[0]);
+                        // ImGui::DragFloat3("Diffuse", &dirLight->_diffuse[0]);
+                        // ImGui::DragFloat3("Specular", &dirLight->_specular[0]);
                         if(ImGui::Button("Remove light"))
                         {
                             lightManager->removeLight(dirLight);
@@ -202,20 +226,22 @@ void GUI::draw()
                     std::string lightIndex = std::to_string( light->getLightIndex());
                     if (ImGui::TreeNode(std::string("Point light #" + lightIndex).c_str()))
                     {
+                        ImGui::Text(std::string("Light uniform name " + pointLight->getUniformName(light->getLightIndex())).c_str());
+                        ImGui::DragFloat3("Position", &pointLight->_position[0]);
                         ImGui::ColorEdit3("Color", &pointLight->_ambient[0]);
-                        ImGui::DragFloat3("Diffuse", &pointLight->_diffuse[0]);
-                        ImGui::DragFloat3("Specular", &pointLight->_specular[0]);
+                        // ImGui::DragFloat3("Diffuse", &pointLight->_diffuse[0], 0.02, 0, 1);
+                        // ImGui::DragFloat3("Specular", &pointLight->_specular[0], 0.02, 0, 1);
 
                         ImGui::SeparatorText("Attenuation");
                         Light::Attenuation *attenuation = &pointLight->_attenuation;
                         ImGui::SetNextItemWidth(sceneSettingSize.x * 0.15);
-                        ImGui::DragFloat("Constant", &attenuation->constant, 0.25, 0.001, 10, "%.3f");
+                        ImGui::DragFloat("Constant", &attenuation->constant, 0.005f, 0.001f, 1.0f, "%.3f");
                         ImGui::SetNextItemWidth(sceneSettingSize.x * 0.15);
                         ImGui::SameLine();
-                        ImGui::DragFloat("Linear", &attenuation->linear, 0.25, 0.001, 10, "%.3f");
+                        ImGui::DragFloat("Linear", &attenuation->linear, 0.005f, 0.001f, 1.0f, "%.3f");
                         ImGui::SetNextItemWidth(sceneSettingSize.x * 0.15);
                         ImGui::SameLine();
-                        ImGui::DragFloat("Quadratic", &attenuation->quadratic, 0.25, 0.001, 10, "%.3f");
+                        ImGui::DragFloat("Quadratic", &attenuation->quadratic, 0.005f, 0.001f, 1.0f, "%.3f");
 
                         if(ImGui::Button("Remove light"))
                         {
@@ -286,18 +312,6 @@ void GUI::draw()
 	    static auto shaderManager = WorldManager::instance().p_shaderManager;
 		if (shaderManager != nullptr) {
 			ImGui::Text("Total shader %d", shaderManager->shaderMaps.size());
-			if(ImGui::BeginTable("Shader Table", 2))
-			{
-				for (auto shader : shaderManager->shaderMaps)
-				{
-					/*ImGui::TableNextRow();
-					ImGui::TableNextColumn();
-					ImGui::Text("Name %s", shader.first);
-					ImGui::TableNextColumn();
-					ImGui::Text("Id %s", shader.second->getId());*/
-				}
-				ImGui::EndTable();
-			}
 		}
 	    ImGui::TreePop();
 	}

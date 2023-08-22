@@ -58,9 +58,11 @@ struct Material {
     sampler2D   normalMap;
     bool        hasNormalMap;
 
-    vec3        ambient;
+    vec4        ambient;
     float       shininess;
 	float       metallic;
+    float       normalMultiplier;
+    bool        emissionOn;
     Attenuation emissionAttenuation;
 };
 
@@ -159,18 +161,6 @@ void main() {
 		normal = texture(_Material.normalMap, fs_in.TexCoord).rgb * 2.0 - 1.0;
 		normal = normalize(fs_in.TBN * normal);
 	}
-    // *********** LIGHT COMBINE *********** //
-    vec3 lightCombine = vec3(0.0,0.0,0.0);
-    for(int i = 0; i < _DirectionalLightCount; i++) {
-        lightCombine += calculateDirectionalLight(_DirectionalLights[i], normal, cameraDirection);
-    }
-    for(int i = 0; i < _PointLightCount; i++) {
-        lightCombine += calculatePointLight(_PointLights[i], normal, fs_in.FragmentPosition, cameraDirection);
-    }
-    for(int i = 0; i < _SpotLightCount; i++) {
-        lightCombine += calculateSpotLight(_SpotLights[i], normal, fs_in.FragmentPosition, cameraDirection);
-    }
-    //**************************************//
 	//**************** PBR *****************//
 	vec3 albedo     = pow(texture(_Material.diffuseMaps[0], fs_in.TexCoord).rgb, vec3(GAMMA));
     float metallic  = texture(_Material.metallicMaps[0], fs_in.TexCoord).r;
@@ -180,6 +170,41 @@ void main() {
 	F0 = mix(F0, albedo, metallic);
 	// reflectance equation
 	vec3 Lo = vec3(0.0);
+    // Calculate Directional light
+    for(int i = 0; i < _DirectionalLightCount; i++) {
+        // calculate per-light radiance
+        vec3 L = normalize(_DirectionalLights[i].direction);
+        vec3 H = normalize(cameraDirection + L);
+        vec3 radiance = _PointLights[i].ambient;
+
+        // Cook-Torrance BRDF
+        float NDF = DistributionGGX(normal, H, roughness);
+        float G   = GeometrySmith(normal, cameraDirection, L, roughness);
+        vec3  F   = fresnelSchlick(max(dot(H, cameraDirection), 0.0), F0);
+
+        vec3 numerator    = NDF * G * F;
+        float denominator = 4.0 * max(dot(normal, cameraDirection), 0.0) * max(dot(normal, L), 0.0) + 0.0001; // + 0.0001 to prevent divide by zero
+        vec3 specular = numerator / denominator;
+
+        // kS is equal to Fresnel
+        vec3 kS = F;
+        // for energy conservation, the diffuse and specular light can't
+        // be above 1.0 (unless the surface emits light); to preserve this
+        // relationship the diffuse component (kD) should equal 1.0 - kS.
+        vec3 kD = vec3(1.0) - kS;
+        // multiply kD by the inverse metalness such that only non-metals 
+        // have diffuse lighting, or a linear blend if partly metal (pure metals
+        // have no diffuse light).
+        kD *= 1.0 - metallic;
+
+        // scale light by NdotL
+        float NdotL = max(dot(normal, L), 0.0);
+
+        // add to outgoing radiance Lo
+        Lo += (kD * albedo / PI + specular) * radiance * NdotL;
+    }
+    
+    // Calculate Point Light
 	for(int i = 0; i < _PointLightCount; i++) {
 		// calculate per-light radiance
         vec3 L = normalize(_PointLights[i].position - fs_in.FragmentPosition);

@@ -60,6 +60,7 @@ std::string DirectionalLight::getUniformName(unsigned lightIndex) const
 
 void DirectionalLight::updateShader(Shader& shader)
 {
+    shader.setVec3(_uniformName + ".ambient", _ambient);
     shader.setVec3(_uniformName + ".direction", _direction);
     shader.setVec3(_uniformName + ".specular", _specular);
     shader.setVec3(_uniformName + ".diffuse", _diffuse);

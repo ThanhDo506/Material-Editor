@@ -7,5 +7,4 @@ int main()
 {
 	Application* app = new Application("Learn OpenGL", 1920, 1080, glm::vec4(0,0,1920,1080));
 	app->run();
-	system("pause");
 }

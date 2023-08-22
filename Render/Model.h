@@ -31,7 +31,7 @@ private:
     Mesh processMesh(aiMesh* mesh, const aiScene* scene);
 
     void loadModel(std::string const &path);
-    void loadMaterial(aiMaterial *mat, aiTexture textureType, TextureMapType tex);
+    std::vector<TextureMap> loadMaterial(aiMaterial *mat, TextureMapType tex);
 
     void draw(Camera &camera);
     void init() override;

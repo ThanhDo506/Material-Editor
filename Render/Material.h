@@ -34,10 +34,15 @@ public:
     std::vector<TextureMap> _aoMaps;
     std::vector<TextureMap> _emissionMaps;
     TextureMap              _normalMap;
-    glm::vec3               _ambient;
+    glm::vec4               _albedo;
     Light::Attenuation      _emissionAttenuation;
-    float                   _shininess;
-    float                   _metallic;
+    float                   _shininess = 16;
+    float                   _metallic = 0.02f;
+    float                   _normalMultiplier = 1.0f;
+    float                   _roughnessMultiplier = 1.0f;
+    glm::vec3               _f0 = glm::vec3(0.04f);
+    bool                    _emissionOn = false;
+    bool                    _useMetallicMap = false;
     Material();
 };
 

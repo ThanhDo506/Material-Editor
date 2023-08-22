@@ -1,5 +1,7 @@
 ﻿#include "PointLight.h"
 
+#include <iostream>
+
 PointLight::PointLight(glm::vec3 position,glm::vec3 ambient, glm::vec3 diffuse, glm::vec3 specular, Attenuation attenuation)
 {
     _attenuation = attenuation;
@@ -71,6 +73,8 @@ std::string PointLight::getUniformName(unsigned int lightIdx) const
 
 void PointLight::updateShader(Shader& shader)
 {
+    shader.setVec3(_uniformName + ".position", _position);
+    shader.setVec3(_uniformName + ".ambient", _ambient);
     shader.setVec3(_uniformName + ".diffuse", _diffuse);
     shader.setVec3(_uniformName + ".specular", _specular);
     shader.setFloat(_uniformName + ".attenuation.constant", _attenuation.constant);
