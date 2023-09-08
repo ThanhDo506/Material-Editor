@@ -157,12 +157,12 @@ void GUI::draw()
             {
                 // TODO must init map
                 ImGui::ColorEdit4("Base Color", &material->_albedo[0]);
-                ImGui::DragFloat3("F0", &material->_f0[0], 0.01f, 0., 1);
+                ImGui::DragFloat3("Reflection color", &material->_f0[0], 0.01f, 0., 1);
                 textureModelHandle(&material->_diffuseMaps[0]);
                 // textureModelHandle(&material->_specularMaps[0]);
                 // ImGui::SliderFloat("Shininess", &material->_shininess, 1, 1024, "%.f");
                 textureModelHandle(&material->_roughnessMaps[0]);
-                ImGui::DragFloat("Roughness multiplier", &material->_roughnessMultiplier, 0.001, -5.0, 5.0);
+                ImGui::DragFloat("Smoothness", &material->_roughnessMultiplier, 0.001, 0.0, 1.0);
                 ImGui::Checkbox("Has metallic map", &material->_useMetallicMap);
                 if (material->_useMetallicMap)
                 {
@@ -175,7 +175,6 @@ void GUI::draw()
                 ImGui::Checkbox("Active emission", &material->_emissionOn);
                 textureModelHandle(&material->_emissionMaps[0]);
                 textureModelHandle(&material->_normalMap);
-                ImGui::DragFloat("Normal multiplier", &material->_normalMultiplier, 0.0025, -10, 10.0);
                 ImGui::TreePop();
             }
         }

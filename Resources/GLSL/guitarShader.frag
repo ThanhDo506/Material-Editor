@@ -157,10 +157,23 @@ void main()
     vec3 V = normalize(fs_in.CameraPosition - fs_in.FragmentPosition);
 
     //*********** CALCULATE NORMAL ***********//
-    vec3 normal = normalize(fs_in.Normal) * _Material.normalMultiplier;
+    vec3 normal = normalize(fs_in.Normal);
     if(_Material.hasNormalMap) {
-        normal = texture(_Material.normalMap, fs_in.TexCoord).xyz * 2.0 - 1.0;
-        normal = normalize(fs_in.TBN * normal) * _Material.normalMultiplier;
+//        normal = texture(_Material.normalMap, fs_in.TexCoord).xyz * 2.0 - 1.0;
+//        normal = normalize(fs_in.TBN * normal);
+        vec3 tangentNormal = texture(_Material.normalMap, fs_in.TexCoord).xyz * 2.0 - 1.0;
+
+        vec3 Q1  = dFdx(fs_in.FragmentPosition);
+        vec3 Q2  = dFdy(fs_in.FragmentPosition);
+        vec2 st1 = dFdx(fs_in.TexCoord);
+        vec2 st2 = dFdy(fs_in.TexCoord);
+
+        vec3 N   = normalize(fs_in.Normal);
+        vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
+        vec3 B  = -normalize(cross(N, T));
+        mat3 TBN = mat3(T, B, N);
+
+        normal = normalize(TBN * tangentNormal);
     }
     vec3  albedo    = pow(texture(_Material.diffuseMaps[0], fs_in.TexCoord).rgb, vec3(GAMMA));
     float metallic;
@@ -169,7 +182,7 @@ void main()
     } else {
         metallic = _Material.metallic;
     }
-    float roughness = texture(_Material.roughnessMaps[0], fs_in.TexCoord).r * _Material.roughnessMultiplier;
+    float roughness = 1.0 - _Material.roughnessMultiplier * texture(_Material.roughnessMaps[0], fs_in.TexCoord).r * (1 - _Material.roughnessMultiplier);
     float ao        = texture(_Material.aoMaps[0], fs_in.TexCoord).r;
     float emission  = texture(_Material.emissionMaps[0], fs_in.TexCoord).r;
 

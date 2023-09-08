@@ -30,7 +30,7 @@ mat3 getTBN(vec3 tangent, vec3 normal);
 void main() {
     vs_out.CameraPosition = inverse(_ViewMatrix)[3].xyz;
     vs_out.FragmentPosition = vec3(_TransformMatrix * vec4(position, 1.0));
-    vs_out.Normal = normal;
+    vs_out.Normal = transpose(inverse(mat3(_TransformMatrix)));
     vs_out.Color = color;
     vs_out.TexCoord = texCoord;
     vs_out.Tangent = tangent;

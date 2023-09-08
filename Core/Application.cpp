@@ -238,6 +238,8 @@ void Application::run()
     Time::instance()._lastUpdatedTime = 0.0;
 	double LAST_TIME_STATISTIC = 0.0;
 	unsigned int FRAME_COUNT = 0;
+    glEnable(GL_DEPTH_TEST);
+
     while(!glfwWindowShouldClose(p_glfwWindow))
     {
         // Calculate timer
@@ -257,15 +259,14 @@ void Application::run()
         // Bind render data to FBO to quadVAO
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
-        glEnable(GL_DEPTH_TEST);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
         
-        shaderProgram1.Activate();
+        /*shaderProgram1.Activate();
         shaderProgram1.setMat4("model", transform);
         shaderProgram1.setMat4("view",  WorldManager::instance().p_mainCamera->getViewMatrix());
         shaderProgram1.setMat4("projection", WorldManager::instance().p_mainCamera->getPerspectiveProjectionMatrix());
-        mesh.draw(shaderProgram1, *WorldManager::instance().p_mainCamera, "", false);
+        mesh.draw(shaderProgram1, *WorldManager::instance().p_mainCamera, "", false);*/
         
         WorldManager::instance().draw();
         // now bind back to default framebuffer and draw a quad plane with the attached framebuffer color texture

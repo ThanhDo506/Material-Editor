@@ -27,7 +27,7 @@ Texture Texture::load(const char* path, bool isSRGB, const TextureParams& params
     stbi_set_flip_vertically_on_load(params.flipVerticallyOnLoad);
     unsigned char* data =
         stbi_load(path, &texture._width, &texture._height, &texture._numChannels,0);
-
+    std::cout << texture._numChannels << std::endl;
     if (data == nullptr)
     {
         stbi_image_free(data);
